@@ -43,7 +43,8 @@ def negative_log_likelihood(p, x, y):
     # for each data point.
     # So replace ``1" with some function. You may want to refer to the chi-square
     # example.
-    ret = 1
+    ret = sum(pdf(p, x))
+    #ret = 1
     return ret
 
 ################################################################################
