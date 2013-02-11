@@ -50,4 +50,9 @@ fit_slope = params_final_vals[0][1]
 
 print fit_intercept, fit_slope
 
+#################################################################################
+# new fit using new slope and intercept 
+y3 = fit_slope*x + fit_intercept
+ax.plot(x,y3,'-r')
+
 plt.show()
