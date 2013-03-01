@@ -31,7 +31,10 @@ else:
     print "Need to pass in an input file for the first argument!!!!"
     exit(-1)
 
-mass = -999*np.ones(500000)
+mass0 = -999*np.ones(500000)
+mass1 = -999*np.ones(500000)
+unique_m0 = -999*np.ones(500000)
+unique_pt0 = -999*np.ones(500000)
 
 content = np.array(infile.read().split()).astype('float')
 
@@ -47,6 +50,8 @@ count = 0
 nentries = len(content)
 
 i = 0
+allm0count= 0
+allpt0count = 0
 while count<nentries:
 
     #print content[count]
@@ -66,16 +71,55 @@ while count<nentries:
     m1  = values_for_this_event[index+2]
     pt1 = values_for_this_event[index+3]
 
+    #remove all of the duplicate masses in first column
+    for m in set(m0):
+        unique_m0[allm0count] = m
+        allm0count += 1
+
+    #remove all of the duplicate pt in second column
+    for pt in set(pt0):
+        unique_pt0[allpt0count] = pt
+        allpt0count += 1
+
     #print "event"
     #print m0,pt0,m1,pt1
-
+   
+    #sort groups to find highest pt and find corresponding mass
     index = np.argsort(pt0)[-1]
-    mass[i] = m0[index]
+    mass0[i] = m0[index]
+
+    #find left over jets that correspond to those with highest pt 
+    other_jets = m1[m0==mass0[i]]
+    other_pt = pt1[m0==mass0[i]]
+
+    #sort jets that are left to find highest pt
+    index = np.argsort(other_pt)[-1]
+    mass1[i] = other_jets[index]
 
     i += 1
     count += (1+nvalues_for_this_event)
 
 
-print "Events: ",len(mass[mass>0])
-lch.hist_err(mass[mass>0],bins=125,range=(0,1000))
+print "Events: ",len(mass0[mass0>0])
+plt.figure()
+lch.hist_err(mass0[mass0>0],bins=125,range=(0,1000))
+plt.figure()
+lch.hist_err(mass1[mass1>0],bins=125,range=(0,1000))
+
+plt.figure()
+lch.hist_2D(mass0,mass1,xbins=100,ybins=100,xrange=(0,500),yrange=(0,500))
+
+#######################
+#plot all of the masses in column one
+plt.figure()
+lch.hist_err(unique_m0[unique_m0>0],bins=125,range=(0,1000))
+
+#######################
+#plot all of the pt in column two
+plt.figure()
+lch.hist_err(unique_pt0[unique_pt0>0],bins=125,range=(0,1000))
+
+
 plt.show()
+
+    
