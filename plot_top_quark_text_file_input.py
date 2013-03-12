@@ -4,6 +4,8 @@ import math
 
 import sys
 
+import lichen.lichen as lch
+
 ################################################################################
 # Figure out the number of combinations
 ################################################################################
@@ -11,7 +13,11 @@ def combinations(njets,ngroup):
     numer = math.factorial(njets)
     denom = math.factorial(ngroup)*math.factorial(njets-ngroup)
 
-    return numer/denom
+    nremaining_jets = njets-ngroup
+    remainingjets_numer = math.factorial(nremaining_jets)
+    remainingjets_denom = math.factorial(ngroup)*math.factorial(nremaining_jets-ngroup)
+
+    return (numer/denom)*(remainingjets_numer/remainingjets_denom)
 
 ################################################################################
 
@@ -25,7 +31,12 @@ else:
     print "Need to pass in an input file for the first argument!!!!"
     exit(-1)
 
-mass = -999*np.ones(500000)
+mass0 = -999*np.ones(500000)
+mass1 = -999*np.ones(500000)
+unique_m0 = -999*np.ones(500000)
+unique_pt0 = -999*np.ones(500000)
+
+pt0_max = -999*np.ones(500000)
 
 content = np.array(infile.read().split()).astype('float')
 
@@ -40,9 +51,12 @@ ncolumns = 4
 count = 0
 nentries = len(content)
 
+i = 0
+allm0count= 0
+allpt0count = 0
 while count<nentries:
 
-    print content[count]
+    #print content[count]
     njets = int(content[count])
     ncombos = combinations(njets,3)
     print ncombos
@@ -59,12 +73,73 @@ while count<nentries:
     m1  = values_for_this_event[index+7]
     pt1 = values_for_this_event[index+8]
 
-    print "event"
-    print m0,pt0,m1,pt1
+    #remove all of the duplicate masses in first column
+    for m in set(m0):
+        unique_m0[allm0count] = m
+        allm0count += 1
 
+    #remove all of the duplicate pt in second columns
+    for pt in set(pt0):
+        unique_pt0[allpt0count] = pt
+        allpt0count += 1
+
+    #print "event"
+    #print m0,pt0,m1,pt1
+   
+    #sort groups to find highest pt and find corresponding mass
+    index = np.argsort(pt0)[-1]
+    pt0_max[i] = pt0[index]
+    mass0[i] = m0[index]
+
+    #find left over jets that correspond to those with highest pt 
+    other_jets = m1[m0==mass0[i]]
+    other_pt = pt1[m0==mass0[i]]
+
+    #sort jets that are left to find highest pt
+    index = np.argsort(other_pt)[-1]
+    mass1[i] = other_jets[index]
+
+    i += 1
     count += (1+nvalues_for_this_event)
 
 
+print "Events: ",len(mass0[mass0>0])
+plt.figure()
+lch.hist_err(mass0[mass0>0],bins=125,range=(0,1000))
+plt.xlabel('mass0')
 
-plt.hist(mass[mass>0],bins=500)
+#plot of highest pt 
+plt.figure()
+lch.hist_err(pt0_max[pt0_max>0],bins=125,range=(0,1000))
+plt.xlabel('pt0_max')
+
+plt.figure()
+lch.hist_err(mass1[mass1>0],bins=125,range=(0,1000))
+plt.xlabel('mass1')
+
+plt.figure()
+lch.hist_2D(mass0,mass1,xbins=100,ybins=100,xrange=(0,500),yrange=(0,500))
+plt.xlabel('mass0')
+plt.ylabel('mass1')
+
+plt.figure()
+lch.hist_2D(mass0,pt0_max,xbins=100,ybins=100,xrange=(0,500),yrange=(0,500))
+plt.xlabel('mass0')
+plt.ylabel('pt0_max')
+
+#######################
+#plot all of the masses in column one
+plt.figure()
+lch.hist_err(unique_m0[unique_m0>0],bins=125,range=(0,1000))
+plt.xlabel('unique_m0')
+
+#######################
+#plot all of the pt in column two
+plt.figure()
+lch.hist_err(unique_pt0[unique_pt0>0],bins=125,range=(0,1000))
+plt.xlabel('unique_pt0')
+
+
 plt.show()
+
+    
