@@ -46,7 +46,7 @@ print content
 
 not_at_end = True
 nevent = 0
-ncolumns = 4
+ncolumns = 12
 
 count = 0
 nentries = len(content)
@@ -66,12 +66,13 @@ while count<nentries:
     end = count+1+nvalues_for_this_event
 
     values_for_this_event = content[start:end]
+    #print values_for_this_event
 
     index = np.arange(0,nvalues_for_this_event,ncolumns)
     m0  = values_for_this_event[index]
     pt0 = values_for_this_event[index+1]
-    m1  = values_for_this_event[index+7]
-    pt1 = values_for_this_event[index+8]
+    m1  = values_for_this_event[index+6]
+    pt1 = values_for_this_event[index+7]
 
     #remove all of the duplicate masses in first column
     for m in set(m0):
