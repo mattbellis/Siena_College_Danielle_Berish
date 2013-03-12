@@ -56,8 +56,8 @@ while count<nentries:
     index = np.arange(0,nvalues_for_this_event,ncolumns)
     m0  = values_for_this_event[index]
     pt0 = values_for_this_event[index+1]
-    m1  = values_for_this_event[index+2]
-    pt1 = values_for_this_event[index+3]
+    m1  = values_for_this_event[index+7]
+    pt1 = values_for_this_event[index+8]
 
     print "event"
     print m0,pt0,m1,pt1
