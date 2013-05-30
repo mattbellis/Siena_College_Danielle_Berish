@@ -1,0 +1,73 @@
+
+# DO NOT DELETE
+
+RooCFAuto003Func_cxx.so: /usr/include/root/Riostream.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RConfig.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RVersion.h RooCFAuto003Func.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooAbsReal.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooAbsArg.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TNamed.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TObject.h
+RooCFAuto003Func_cxx.so: /usr/include/root/Rtypes.h
+RooCFAuto003Func_cxx.so: /usr/include/root/DllImport.h
+RooCFAuto003Func_cxx.so: /usr/include/root/Rtypeinfo.h
+RooCFAuto003Func_cxx.so: /usr/include/root/snprintf.h
+RooCFAuto003Func_cxx.so: /usr/include/root/strlcpy.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TGenericClassInfo.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TSchemaHelper.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TStorage.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TVersionCheck.h
+RooCFAuto003Func_cxx.so: /usr/include/root/Riosfwd.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TBuffer.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TString.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TMathBase.h
+RooCFAuto003Func_cxx.so: /usr/include/root/THashList.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TList.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TSeqCollection.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TCollection.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TIterator.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TRefArray.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TProcessID.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TObjArray.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooPrintable.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooRefCountList.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooLinkedList.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooLinkedListElem.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooHashTable.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooAbsCache.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooLinkedListIter.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooNameReg.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TClass.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TDictionary.h
+RooCFAuto003Func_cxx.so: /usr/include/root/Property.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TObjString.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooCmdArg.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooCurve.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TGraph.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TAttLine.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TAttFill.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TAttMarker.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TVectorFfwd.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TVectorDfwd.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TFitResultPtr.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooPlotable.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TMatrixDfwd.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooArgSet.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooAbsCollection.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooErrorHandler.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooArgList.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooGlobalFunc.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooRealProxy.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooArgProxy.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooAbsProxy.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooAbsRealLValue.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooNumber.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooAbsLValue.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooAbsBinning.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooCategoryProxy.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooAbsCategory.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooCatType.h
+RooCFAuto003Func_cxx.so: /usr/include/root/RooAbsCategoryLValue.h
+RooCFAuto003Func_cxx.so: /usr/include/root/TMath.h /usr/include/root/TError.h
+RooCFAuto003Func_cxx.so: /usr/include/root/include/cintdictversion.h /usr/include/root/include/RVersion.h
+RooCFAuto003Func_cxx__ROOTBUILDVERSION= 5.34/07
