@@ -53,7 +53,7 @@ def negative_log_likelihood(p, x, y):
 ################################################################################
 mu = 5.0
 sigma = 0.5
-x = np.random.normal(mu,sigma,20)
+x = np.random.normal(mu,sigma,10000)
 plt.figure()
 lch.hist_err(x,bins=25)
 
