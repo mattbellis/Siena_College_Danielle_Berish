@@ -136,8 +136,8 @@ ncontributions[3] = 2240.79 # From the COUNTING group! wjets
 ################################################################################
 # THIS WE WILL CHANGE
 ################################################################################
-ncontributions[4] = 10000  # Derived from data, QCD stuff
-ncontributions[1] = 635.094 # From the COUNTING group! single t
+ncontributions[4] = 4235.99  # Derived from data, QCD stuff
+ncontributions[1] = 5000 # From the COUNTING group! single t
 ncontributions[2] = 361.837 # From the COUNTING group! single tbar
 ncontributions[3] = 2240.79 # From the COUNTING group! wjets
 
