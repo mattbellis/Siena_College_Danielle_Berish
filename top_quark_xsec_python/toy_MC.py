@@ -46,7 +46,6 @@ def toy_MC(n,max_files=1,tag="default"):
         f.close()
         
         i += 1
-
  
 
 #============================================================
@@ -61,9 +60,7 @@ else:
     exit(-1)
 
 tag = sys.argv[1].split('/')[-1].split('.')[0]
-toy_MC(infile,100,tag)
-
-
+toy_MC(infile,1,tag)
 
 
         
