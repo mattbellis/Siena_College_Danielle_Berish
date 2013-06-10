@@ -79,8 +79,8 @@ print first_guess
 print nominal
 print uncert
 
-njets_min = 4
-njets_max = 4
+njets_min = 6 
+njets_max = 6
 
 ################################################################################
 # Xsec to n-events
