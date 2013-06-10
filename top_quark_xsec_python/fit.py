@@ -385,7 +385,10 @@ for j in range(njets_min,njets_max+1):
     nums = []
     for i,s in enumerate(samples[0:-1]):
         name = "num_%s_njets%d" % (s,j)
-        print "FINAL VALUES: %-16s: %10.3f +\- %6.3f" % (name, values[name], errors[name])
+        if s=='ttbar':
+            print "FINAL VALUES: %-16s: %10.3f +\- %6.3f" % (name, values[name], values[name]*(errors['xsec_ttbar']/values['xsec_ttbar']))
+        else:
+            print "FINAL VALUES: %-16s: %10.3f +\- %6.3f" % (name, values[name], errors[name])
 
 
 print "ndata: "
