@@ -12,8 +12,14 @@ from datetime import datetime,timedelta
 
 import iminuit as minuit
 
+import sys
+
 # Binned likelihood fitting
 # http://hepunx.rl.ac.uk/~adye/thesis/html/node51.html
+
+toy_input_file = None
+if len(sys.argv)>1:
+    toy_input_file = sys.argv[1]
 
 luminosity = 5695.503 # pb-1
 
@@ -79,8 +85,8 @@ print first_guess
 print nominal
 print uncert
 
-njets_min = 6 
-njets_max = 6
+njets_min = 4 
+njets_max = 4
 
 ################################################################################
 # Xsec to n-events
@@ -202,6 +208,10 @@ ranges = [0.0, 5.0]
 data = []
 for j in range(njets_min,njets_max+1):
     infilename = "templates/output_mu_njets%d.dat" % (j)
+
+    if toy_input_file != None:
+        infilename = toy_input_file
+
     infile = open(infilename,'rb')
 
     content = np.array(infile.read().split()).astype('float')
@@ -375,7 +385,7 @@ for j in range(njets_min,njets_max+1):
     nums = []
     for i,s in enumerate(samples[0:-1]):
         name = "num_%s_njets%d" % (s,j)
-        print "%-16s: %10.3f +\- %6.3f" % (name, values[name], errors[name])
+        print "FINAL VALUES: %-16s: %10.3f +\- %6.3f" % (name, values[name], errors[name])
 
 
 print "ndata: "
