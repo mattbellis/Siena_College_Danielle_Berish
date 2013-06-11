@@ -91,8 +91,13 @@ tot_pts += tpts
 
 tbarpts,xpts = scale(infile_4,300)
 tot_pts += tbarpts
+#===================================================================================================
 
-outfilename = "toy_cocktail_1.dat" 
+tag = sys.argv[1].split('/')[-1].split('.')[0]
+tag = str(tag)
+name = tag[-3:]
+
+outfilename = "toy_cocktail_output_%s.dat" % (name)
 f = open(outfilename, 'w')
 output = ""
 
