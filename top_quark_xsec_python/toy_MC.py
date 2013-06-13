@@ -13,7 +13,7 @@ def toy_MC(n,max_files=1,tag="default"):
     i = 0
     
     while i<max_files:
-        outfilename = "toy_%s_%03d.dat" % (tag,i)
+        outfilename = "toy_%s_%05d.dat" % (tag,i)
         f = open(outfilename,'w+')
         output = ""
         
@@ -60,7 +60,7 @@ else:
     exit(-1)
 
 tag = sys.argv[1].split('/')[-1].split('.')[0]
-toy_MC(infile,1,tag)
+toy_MC(infile,10000,tag)
 
 
         

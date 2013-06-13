@@ -95,7 +95,7 @@ tot_pts += tbarpts
 
 tag = sys.argv[1].split('/')[-1].split('.')[0]
 tag = str(tag)
-name = tag[-3:]
+name = tag[-5:]
 
 outfilename = "toy_cocktail_output_%s.dat" % (name)
 f = open(outfilename, 'w')
