@@ -45,7 +45,7 @@ else:
 # Wjets
 infile_1 = None
 if len(sys.argv)>1:
-    infile_1 = open(sys.argv[1],'r')
+    infile_1 = open(sys.argv[2],'r')
 else:
     print "Need to pass in an input file for the first argument!!!!"
     exit(-1)
@@ -53,7 +53,7 @@ else:
 # QCD
 infile_2 = None
 if len(sys.argv)>1:
-    infile_2 = open(sys.argv[1],'r')
+    infile_2 = open(sys.argv[3],'r')
 else:
     print "Need to pass in an input file for the first argument!!!!"
     exit(-1)
@@ -61,7 +61,7 @@ else:
 # t
 infile_3 = None
 if len(sys.argv)>1:
-    infile_3 = open(sys.argv[1],'r')
+    infile_3 = open(sys.argv[4],'r')
 else:
     print "Need to pass in an input file for the first argument!!!!"
     exit(-1)
@@ -69,7 +69,7 @@ else:
 # tbar
 infile_4 = None
 if len(sys.argv)>1:
-    infile_4 = open(sys.argv[1],'r')
+    infile_4 = open(sys.argv[5],'r')
 else:
     print "Need to pass in an input file for the first argument!!!!"
     exit(-1)

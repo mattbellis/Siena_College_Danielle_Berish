@@ -31,4 +31,6 @@ for line in infile:
 
 
 plt.scatter(xpts,ypts)
+print sum(ypts)
+#plt.ylim(0,500)
 plt.show()
