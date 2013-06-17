@@ -208,6 +208,7 @@ ranges = [0.0, 5.0]
 ################################################################################
 data = []
 for j in range(njets_min,njets_max+1):
+    
     infilename = "templates/output_mu_njets%d.dat" % (j)
 
     if toy_input_file != None:
@@ -241,7 +242,8 @@ templates = []
 for j in range(njets_min,njets_max+1):
     templates.append([])
     for i,s in enumerate(samples[0:-1]):
-        infilename = "templates/output_%s_njets%d.dat" % (s,j)
+        infilename = "/home/berish/Siena_College_Danielle_Berish/top_quark_xsec_python/templates/output_%s_njets%d.dat" % (s,j)
+        #infilename = "templates/output_%s_njets%d.dat" % (s,j)
         infile = open(infilename,'rb')
 
         content = np.array(infile.read().split()).astype('float')
