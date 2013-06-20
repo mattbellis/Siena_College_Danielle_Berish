@@ -60,8 +60,9 @@ first_guess.append([1958.87,13779.1/2, 13779.1/2, 60893.0, 17119.8]) # njets = 1
 first_guess.append([11705.5,17155.0/2, 17155.0/2, 17531.1, 12111.7]) # njets = 2
 first_guess.append([22655.6,8262.75/2, 8262.75/2, 4360.26, 5084.18]) # njets = 3
 
-first_guess.append([18927.9, 635.094, 361.837, 2240.79, 4235.99]) # njets = 4
+#first_guess.append([18927.9, 635.094, 361.837, 2240.79, 4235.99]) # njets = 4
 #first_guess.append([18927.9,635, 361, 2240.0, 4235.99]) # njets = 4, from CMS DAS
+first_guess.append([19000.9, 600.0, 300.0, 3000.0, 10.0]) # njets = 4, for toy studies
 first_guess.append([7420.38,180.444/2, 180.444/2, 91.322, 0.001]) # njets = 5
 first_guess.append([2941.43,28.312/2, 28.312/2, 27.282, 0.000]) # njets = 6
 
@@ -207,6 +208,7 @@ ranges = [0.0, 5.0]
 ################################################################################
 data = []
 for j in range(njets_min,njets_max+1):
+    
     infilename = "templates/output_mu_njets%d.dat" % (j)
 
     if toy_input_file != None:
@@ -240,7 +242,8 @@ templates = []
 for j in range(njets_min,njets_max+1):
     templates.append([])
     for i,s in enumerate(samples[0:-1]):
-        infilename = "templates/output_%s_njets%d.dat" % (s,j)
+        infilename = "/home/berish/Siena_College_Danielle_Berish/top_quark_xsec_python/templates/output_%s_njets%d.dat" % (s,j)
+        #infilename = "templates/output_%s_njets%d.dat" % (s,j)
         infile = open(infilename,'rb')
 
         content = np.array(infile.read().split()).astype('float')
@@ -312,7 +315,7 @@ for i,s in enumerate(samples[0:-1]):
 
 params_names,kwd = fitutils.dict2kwd(params_dict)
 kwd['errordef'] = 0.5 # For maximum likelihood method
-#kwd['print_level'] = 1
+#kwd['print_level'] = 0
 
 data_and_pdfs = [data,templates]
 
@@ -386,7 +389,8 @@ for j in range(njets_min,njets_max+1):
     for i,s in enumerate(samples[0:-1]):
         name = "num_%s_njets%d" % (s,j)
         if s=='ttbar':
-            print "FINAL VALUES: %-16s: %10.3f +\- %6.3f" % (name, values[name], values[name]*(errors['xsec_ttbar']/values['xsec_ttbar']))
+            nttbar = xsec_to_n(values['xsec_ttbar'],luminosity,mc_xsec,efficiency[j][i],muon_btag_eff_prod)
+            print "FINAL VALUES: %-16s: %10.3f +\- %6.3f" % (name, nttbar, nttbar*(errors['xsec_ttbar']/values['xsec_ttbar']))
         else:
             print "FINAL VALUES: %-16s: %10.3f +\- %6.3f" % (name, values[name], errors[name])
 
@@ -406,4 +410,4 @@ for j in range(njets_min,njets_max+1):
 '''
 
 
-plt.show()
+#plt.show()

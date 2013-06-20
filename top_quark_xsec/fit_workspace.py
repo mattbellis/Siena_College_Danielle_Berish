@@ -136,10 +136,10 @@ ncontributions[3] = 2240.79 # From the COUNTING group! wjets
 ################################################################################
 # THIS WE WILL CHANGE
 ################################################################################
-ncontributions[4] = 4235.99  # Derived from data, QCD stuff
-ncontributions[1] = 5000 # From the COUNTING group! single t
-ncontributions[2] = 361.837 # From the COUNTING group! single tbar
-ncontributions[3] = 2240.79 # From the COUNTING group! wjets
+ncontributions[4] = 10000  # Derived from data, QCD stuff
+ncontributions[1] = 10000 # From the COUNTING group! single t
+ncontributions[2] = 10000 # From the COUNTING group! single tbar
+ncontributions[3] = 10000 # From the COUNTING group! wjets
 
 print "Contributions: "
 for s,n in zip(samples[0:5],ncontributions):
