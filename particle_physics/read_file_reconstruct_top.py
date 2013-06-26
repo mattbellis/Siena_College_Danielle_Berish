@@ -66,7 +66,19 @@ for count,event in enumerate(events):
             top_momentum = np.append(top_momentum,momentum)
             top_pt = np.append(top_pt,p_transverse)   
 
+#######################################################
+#find the percentage of top quark events that 
+#have a pt>400
 
+count = 0
+for pt in top_pt:
+    if pt > 400:
+        count += 1
+
+fraction = float(count)/len(top_pt)
+print "Fraction of top with pt>400: %f" % (fraction)
+
+######################################################
 tag = sys.argv[1].split('/')[-1].split('.')[0]
 tag = str(tag[-5:])
 

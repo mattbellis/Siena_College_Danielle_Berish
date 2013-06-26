@@ -105,28 +105,17 @@ for count,event in enumerate(events):
     p_met[nm] = p
     nm += 1
 
-    #reconstruct the top quark
-    pt_top = -9999*np.ones(100000)
-    nt = 0
-    if len(jets)<3:
-        pt_top = pt_top
-    elif len(jets)==3:
-        pt = np.sqrt(jets[1]**2 + jets[2]**2)
-        pt_top[nt] = pt
-        nt += 1
-    else:
-
 ###########################################################################
 tag = sys.argv[1].split('/')[-1].split('.')[0]
-tag = str(tag[-5:])
 
 print "Making the plots....."
 # Histograms of momentum
 plt.figure()
 
 plt.subplot(321)
-lch.hist_err(p_jets[p_jets>-999],bins=50,range=(0,1500),fmt='o',markersize=5,color='black',ecolor='black')
+lch.hist_err(p_jets[p_jets>-999],bins=50,range=(0,400),fmt='o',markersize=5,color='black',ecolor='black')
 plt.title("%s: Jet momentum" % (tag))
+plt.locator_params(nbins=6)
 #plt.xlabel("Momentum")
 
 plt.subplot(322)
@@ -135,18 +124,19 @@ plt.title("%s: Muon momentum" % (tag))
 #plt.xlabel("Momentum")
 
 plt.subplot(323)
-lch.hist_err(p_electrons[p_electrons>-999],bins=50,range=(0,300),fmt='o',markersize=5,color='green',ecolor='green')
+lch.hist_err(p_electrons[p_electrons>-999],bins=50,range=(0,200),fmt='o',markersize=5,color='green',ecolor='green')
 plt.title("%s: Electron momentum" % (tag))
 #plt.xlabel("Momentum")
 
 plt.subplot(324)
-lch.hist_err(p_photons[p_photons>-999],bins=50,range=(0,600),fmt='o',markersize=5,color='orange',ecolor='orange')
+lch.hist_err(p_photons[p_photons>-999],bins=50,range=(0,200),fmt='o',markersize=5,color='orange',ecolor='orange')
 plt.title("%s: Photon momentum" % (tag))
 #plt.xlabel("Momentum")
 
 plt.subplot(325)
 lch.hist_err(p_met[p_met>-999],bins=50,range=(0,150),fmt='o',markersize=5,color='teal',ecolor='teal')
 plt.title("%s: MET" % (tag))
+plt.locator_params(nbins=6)
 #plt.xlabel("Momentum")
 
 plt.subplots_adjust(hspace = 0.5)
