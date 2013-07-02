@@ -15,23 +15,16 @@ print len(events)
 print "Looping over the events..."
 for event in events:
 
-<<<<<<< HEAD
     jets = event[0]
     muons = event[1]
     electrons = event[2]
     photons = event[3]
     met = event[4]
+    
+    print "# of jets: %d" % (len(jets))
 
-    #print "# of jets: %d" % (len(jets))
+    print "# of muons: %d" % (len(muons))
     if len(muons)>0:
         print muons
-=======
-    jets = events[0]
-    muons = events[1]
-    electrons = events[2]
-    photons = events[3]
-    met = events[4]
 
-    #print "# of jets: %d" % (len(jets))
->>>>>>> 7fee3d5e398b4e9c9c265fcc03500e49106dac0b
 
