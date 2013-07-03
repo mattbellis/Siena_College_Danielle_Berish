@@ -34,6 +34,11 @@ def top(n): #n = number of jets
 
     return p,m,pt,jet_index
 
+#######################################################################
+# find the muon and neutrino 
+def second_top(n):
+    m_second = np.array([])
+    
 
 #######################################################################
 f = open(sys.argv[1])
@@ -44,8 +49,6 @@ events = hep_tools.get_events(f)
 print len(events)
 
 top_mass = np.array([])
-top_momentum = np.array([])
-top_pt = np.array([])
 second_top_mass = np.array([])
 
 for count,event in enumerate(events):
@@ -56,47 +59,46 @@ for count,event in enumerate(events):
     met = event[4]
 
     n = len(jets)
-    print n
+    #print n
 
     if n<3:
         None
     elif n>=3:
         p,m,pt,jet_index = top(n)
         if len(p)>0:
-            i = np.argmax(p) #find index of largest momentum 
+            i = np.argmax(pt) #find index of largest transverse momentum 
             mass = m[i]      # and corresponding mass
-            momentum = np.sqrt(p[i])
-            p_transverse = pt[i]
-
-            top_mass = np.append(top_mass,mass)
-            top_momentum = np.append(top_momentum,momentum)
-            top_pt = np.append(top_pt,p_transverse) 
-    elif n>=6:
-        print jets
-        p,m,pt,jet_index = top(n)
-        if len(p)>0:
-            i = np.argmax(p) #find index of largest momentum 
-            mass = m[i]      # and corresponding mass
-            momentum = np.sqrt(p[i])
-            p_transverse = pt[i]
-
-            top_mass = np.append(top_mass,mass)
-            top_momentum = np.append(top_momentum,momentum)
-            top_pt = np.append(top_pt,p_transverse)
             
-            ################
-            # second top 
-            jets.pop(jet_index[i][0])
-            jets.pop(jet_index[i][1])
-            jets.pop(jet_index[i][2])
-            n = len(jets)
+            top_mass = np.append(top_mass,mass)
 
-            p,m,pt,jet_index = top(n)
-            if len(p)>0:
-                i = np.argmax(p)
-                mass = m[i]
-                second_top_mass = np.append(second_top_mass,mass)
-#######################################################
+            jets.pop(jet_index[i][0][0])
+            jets.pop((jet_index[i][0][1]-1))
+            jets.pop((jet_index[i][0][2]-2))
+
+            n = len(jets)
+            if n>0:
+                if jets[0][4] >= 0 or jets[n-1][4] >= 0:
+                    for muon in muons:
+                        E_n = np.sqrt(met[0]**2 + met[1]**2)
+                        E = E_n + muon[0] + jets[0][0]
+                        px = met[0] + muon[1] + jets[0][1]
+                        py = met[1] + muon[2] + jets[0][2]
+                        pz = 0
+                        
+                        second_mass = np.sqrt(E**2 - (px**2 + py**2 + pz**2)) 
+                        second_top_mass = np.append(second_top_mass,second_mass)
+                elif jets[n-1][4] != jets[0][4] and jets[n-1][4] >= 0:
+                    for muon in muons:
+                        E_n = np.sqrt(met[0]**2 + met[1]**2)
+                        E = E_n + muon[0] + jets[n-1][0]
+                        px = met[0] + muon[1] + jets[n-1][1]
+                        py = met[1] + muon[2] + jets[n-1][2]
+                        pz = 0
+
+                        second_mass = np.sqrt(E**2 - (px**2 + py**2 + pz**2))
+                        second_top_mass = np.append(second_top_mass,second_mass)
+#####################################################
+'''
 #find the percentage of top quark events that 
 #have a pt>400
 
@@ -107,17 +109,16 @@ for pt in top_pt:
 
 fraction = float(count)/len(top_pt)
 print "Fraction of top with pt>400: %f" % (fraction)
-
+'''
 ######################################################
-print 'second top mass', second_top_mass
-
 tag = sys.argv[1].split('/')[-1].split('.')[0]
-tag = str(tag[-5:])
 
 plt.figure()
 lch.hist_err(top_mass,bins=50,range=(0,500))
 plt.title("%s: Top Mass" % (tag))
 
+
+'''
 plt.figure()
 
 plt.subplot(121)
@@ -127,10 +128,10 @@ plt.title("%s: Top momentum" % (tag))
 plt.subplot(122)
 lch.hist_err(top_pt,bins=50,range=(0,400))
 plt.title("%s: Top pt" % (tag))
+'''
 
-'''
 plt.figure()
-lch.hist_err(second_top_mass, bins=50)
+lch.hist_err(second_top_mass, bins=50,range=(0,500))
 plt.title("%s: Second Top Mass" % (tag))
-'''
+
 plt.show()

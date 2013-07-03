@@ -22,7 +22,8 @@ for event in events:
     met = event[4]
     
     print "# of jets: %d" % (len(jets))
-
+    if len(jets)>0:
+        print "jets", jets
     print "# of muons: %d" % (len(muons))
     if len(muons)>0:
         print muons
