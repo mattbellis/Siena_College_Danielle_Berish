@@ -35,12 +35,6 @@ def top(n): #n = number of jets
     return p,m,pt,jet_index
 
 #######################################################################
-# find the muon and neutrino 
-def second_top(n):
-    m_second = np.array([])
-    
-
-#######################################################################
 f = open(sys.argv[1])
 
 print "Reading in the data...."

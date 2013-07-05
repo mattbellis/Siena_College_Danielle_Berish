@@ -11,6 +11,7 @@ def top(n): #n = number of jets
     p = np.array([])
     m = np.array([])
     pt = np.array([])
+    jet_index = []
     for i in range(0,n):
         for j in range(i+1,n):
             for k in range(j+1,n):
@@ -24,11 +25,31 @@ def top(n): #n = number of jets
                     p_new = px**2 + py**2 + pz**2 
                     m_new = np.sqrt(energy**2 - p_new) 
                     pt_new =np.sqrt(px**2 + py**2)
+                    jet_index_new = [i,j,k]
 
                     p = np.append(p,p_new)
                     m = np.append(m,m_new)
                     pt = np.append(pt,pt_new)
-    return p,m,pt
+                    jet_index.append(jet_index_new)
+    return p,m,pt,jet_index
+######################################################################
+# find W jet in top jets 
+def w_jet(n): #n = number of jets 
+    p = np.array([])
+    m = np.array([])
+    for i in range(0,n):
+        for j in range(i+1,n):
+            energy = top_jets[i][0] + top_jets[j][0] 
+            px = top_jets[i][1] + top_jets[j][1] 
+            py = top_jets[i][2] + top_jets[j][2]
+            pz = top_jets[i][3] + top_jets[j][3]
+
+            p_new = px**2 + py**2 + pz**2 
+            m_new = np.sqrt(energy**2 - p_new) 
+
+            p = np.append(p,np.sqrt(p_new))
+            m = np.append(m,m_new)
+    return p,m
 
 
 #######################################################################
@@ -42,6 +63,7 @@ print len(events)
 top_mass = np.array([])
 top_momentum = np.array([])
 top_pt = np.array([])
+wjet_mass = np.array([])
 
 for count,event in enumerate(events):
     jets = event[0]
@@ -49,13 +71,14 @@ for count,event in enumerate(events):
     electrons = event[2]
     photons = event[3]
     met = event[4]
+    top_jets = []
 
     n = len(jets)
 
     if n<3:
         None
     elif n>=3:
-        p,m,pt = top(n)
+        p,m,pt,jet_index = top(n)
         if len(p)>0:
             i = np.argmax(p) #find index of largest momentum 
             mass = m[i]      # and corresponding mass
@@ -65,8 +88,18 @@ for count,event in enumerate(events):
             top_mass = np.append(top_mass,mass)
             top_momentum = np.append(top_momentum,momentum)
             top_pt = np.append(top_pt,p_transverse)   
+           
+            top_jets.append(jets[jet_index[i][0]])
+            top_jets.append(jets[jet_index[i][1]])
+            top_jets.append(jets[jet_index[i][2]])
+
+            n = len(top_jets)
+            p_w,m_w = w_jet(n)
+            wjet_mass = np.append(wjet_mass,m_w)
+
 
 #######################################################
+'''
 #find the percentage of top quark events that 
 #have a pt>400
 
@@ -77,7 +110,7 @@ for pt in top_pt:
 
 fraction = float(count)/len(top_pt)
 print "Fraction of top with pt>400: %f" % (fraction)
-
+'''
 ######################################################
 tag = sys.argv[1].split('/')[-1].split('.')[0]
 
@@ -95,4 +128,7 @@ plt.subplot(122)
 lch.hist_err(top_pt,bins=50,range=(0,400))
 plt.title("%s: Top pt" % (tag))
 
+plt.figure()
+lch.hist_err(wjet_mass,bins=50,range=(0,500))
+plt.title("%s: Wjet Mass" % (tag))
 plt.show()
