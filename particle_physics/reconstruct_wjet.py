@@ -27,7 +27,7 @@ def top(n): #n = number of jets
                     pt_new =np.sqrt(px**2 + py**2)
                     jet_index_new = [i,j,k]
 
-                    p = np.append(p,p_new)
+                    p = np.append(p,np.sqrt(p_new))
                     m = np.append(m,m_new)
                     pt = np.append(pt,pt_new)
                     jet_index.append(jet_index_new)

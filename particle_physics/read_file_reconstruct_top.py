@@ -25,7 +25,7 @@ def top(n): #n = number of jets
                     m_new = np.sqrt(energy**2 - p_new) 
                     pt_new =np.sqrt(px**2 + py**2)
 
-                    p = np.append(p,p_new)
+                    p = np.append(p,np.sqrt(p_new))
                     m = np.append(m,m_new)
                     pt = np.append(pt,pt_new)
     return p,m,pt
