@@ -279,7 +279,15 @@ print "Making the plots....."
 plt.figure()
 #lch.hist_2D(theta,top_momentum[top_momentum>-999], xbins=50,ybins=50)
 #lch.hist_2D(top_mass[top_mass>-999],top_momentum[top_momentum>-999], xbins=50, ybins=50)
-lch.hist_2D(theta,second_top_mass,xbins=50,ybins=50)
+#lch.hist_2D(theta,second_top_mass,xbins=10,ybins=10)
+'''
+hist,xedges,yedges = np.histogram2d(top_momentum[top_momentum>-999],theta,bins=(25,50))
+extent = [xedges[0],xedges[-1],yedges[0],yedges[-1]]
+plt.imshow(hist,extent=extent,interpolation='nearest',origin='lower')
+'''
+top_momentum = top_momentum[top_momentum>-999]
+lch.hist_2D(top_momentum,theta,xbins=25,ybins=50)
+
 plt.show()
 
 
