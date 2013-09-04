@@ -19,6 +19,8 @@ import numpy as np
 #  Read in the data.
 # ==============================================================================
 
+ROOT.gStyle.SetOptStat(1111111)
+
 chain = ROOT.TChain("Events")
 
 for file in sys.argv[1:]:
@@ -39,8 +41,8 @@ htoppt = TH1D("toppt","toppt", 100,100.0,1100.0)
 # Assignment! 
 # Fill these hisograms
 ###############################################################################
-htop_ptmax = TH1D("htop_ptmax","Highest pt top", 100,100.0,500.0)
-hcsvjet_ptmax = TH1D("hcsvjet_ptmax","Highest pt CSV jet", 100,100.0,500.0)
+htop_ptmax = TH1D("htop_ptmax","Highest pt top", 100,-100,500.0)
+hcsvjet_ptmax = TH1D("hcsvjet_ptmax","Highest pt CSV jet", 100,-100.0,500.0)
 
 
 # Muon
