@@ -35,6 +35,14 @@ for i in range(0,10):
 hnjets = TH1D("njets","njets", 10,-0.5,9.5)
 htoppt = TH1D("toppt","toppt", 100,100.0,1100.0)
 
+###############################################################################
+# Assignment! 
+# Fill these hisograms
+###############################################################################
+htop_ptmax = TH1D("htop_ptmax","Highest pt top", 100,100.0,500.0)
+hcsvjet_ptmax = TH1D("hcsvjet_ptmax","Highest pt CSV jet", 100,100.0,500.0)
+
+
 # Muon
 muon_str = []
 muon_str.append("floats_pfShyftTupleMuons_pt_ANA.obj")
@@ -50,10 +58,10 @@ top_str.append("floats_pfShyftTupleJetsLooseTopTag_mass_ANA.obj")
 
 # CSV jets
 csvjet_str = []
-csvjet_str.append("floats_pfShyftTupleJets_csv_ANA.obj")
-csvjet_str.append("floats_pfShyftTupleJetsLooseTopTag_pt_ANA.obj")
-csvjet_str.append("floats_pfShyftTupleJetsLooseTopTag_eta_ANA.obj")
-csvjet_str.append("floats_pfShyftTupleJetsLooseTopTag_phi_ANA.obj")
+csvjet_str.append("floats_pfShyftTupleJetsLoose_csv_ANA.obj")
+csvjet_str.append("floats_pfShyftTupleJetsLoose_pt_ANA.obj")
+csvjet_str.append("floats_pfShyftTupleJetsLoose_eta_ANA.obj")
+csvjet_str.append("floats_pfShyftTupleJetsLoose_phi_ANA.obj")
 
 #chain.SetBranchStatus('*', 1 )
 chain.SetBranchStatus('*', 0 )
@@ -85,28 +93,56 @@ for n in xrange(nev):
 
     chain.GetEntry(n)
 
-    pt_meas = chain.GetLeaf(top_str[0]).GetValue(0)
-    htoppt.Fill(pt_meas)
+    #pt_meas = chain.GetLeaf(top_str[0]).GetValue(0)
+    #htoppt.Fill(pt_meas)
 
     #print "---------"
+    top_ptmax = 0.0
+    csvjet_ptmax = 0.0
     njets = 0
     for i in xrange(npossiblejets):
-        val = chain.GetLeaf(csvjet_str[0]).GetValue(i)
-        if val>0.0:
-            njets += 1
-            #hcsv.Fill(val)
-            for j in range(0,10):
-                ptlo = 0 + j*100.0
-                pthi = 0 + (j+1)*100.0
-                if pt_meas>=ptlo and pt_meas<=pthi:
-                    hcsv[j].Fill(val)
-        #print val
+        #val = chain.GetLeaf(csvjet_str[0]).GetValue(i)
+        top_pt = chain.GetLeaf(top_str[0]).GetValue(i)
+        if top_pt > top_ptmax:
+            top_ptmax = top_pt
+        csvjet_pt = chain.GetLeaf(csvjet_str[1]).GetValue(i)
+        if csvjet_pt > csvjet_ptmax:
+            csvjet_ptmax = csvjet_pt
+
+    htop_ptmax.Fill(top_ptmax)
+    hcsvjet_ptmax.Fill(csvjet_ptmax)
+
+
+    '''
+    if val>0.0:
+        njets += 1
+        #hcsv.Fill(val)
+        for j in range(0,10):
+            ptlo = 0 + j*100.0
+            pthi = 0 + (j+1)*100.0
+            if pt_meas>=ptlo and pt_meas<=pthi:
+                hcsv[j].Fill(val)
+    #print val
+    '''
     #print "njets: ",njets
-    hnjets.Fill(njets)
+    #hnjets.Fill(njets)
 
 ################################################################################
-# Unfold with one of the algorithms
+# 
 ################################################################################
+ctop = TCanvas( 'ctop', 'Top pt', 10, 10, 1400, 800 )
+ctop.Divide(1,1)
+ctop.cd(1)
+htop_ptmax.Draw()
+ctop.Update()
+
+
+ccsvjet = TCanvas( 'ccsvjet', 'CSV Jet pt', 10, 10, 1400, 800)
+ccsvjet.Divide(1,1)
+ccsvjet.cd(1)
+hcsvjet_ptmax.Draw()
+ccsvjet.Update()
+'''
 c1 = TCanvas( 'c1', 'MC', 10, 10, 1400, 800 )
 c1.Divide(2,1)
 c1.cd(1)
@@ -119,6 +155,7 @@ c2.Divide(5,2)
 for i in range(0,10):
     c2.cd(i+1)
     hcsv[i].Draw()
+'''
 
 '''
 hMC_true.SetLineColor(kBlack);  
