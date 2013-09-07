@@ -49,6 +49,7 @@ def top(n): #n = number of jets
                     p_new = px**2 + py**2 + pz**2
                     m_new = np.sqrt(energy**2 - p_new)
                     pt_new =np.sqrt(px**2 + py**2)
+                    #print energy,px,py,pz,pt_new
                     jet_index_new = [i,j,k]
                     pt_comp_new = [px,py]
 
@@ -109,10 +110,13 @@ def angle(n):   # n = index of top candidate
     pt_x = pt_comp_top[n][0]
     pt_y = pt_comp_top[n][1]
 
+    print met_x,met_y,pt_x,pt_y
+
     pt_len = pt_top[n]
+    print pt_len,np.sqrt(pt_x**2 + pt_y**2)
     met_len = np.sqrt(met_x**2 + met_y**2)
 
-    k = k = pt_x*met_x + pt_y*met_y
+    k = pt_x*met_x + pt_y*met_y
 
     x = k/(pt_len*met_len)
     theta = np.arccos(x)
@@ -156,21 +160,29 @@ tm = 0
 tp = 0
 tpt = 0
 
-second_top_mass = np.array([])
-second_top_momentum = np.array([])
+second_top_mass = []
+second_top_momentum = []
 
-wjet_mass = np.array([]) 
-wjet_momentum =  np.array([])
+wjet_mass = []
+wjet_momentum = []
 
+<<<<<<< HEAD
 #theta = -999*np.ones(1000000)
 #theta = np.array([])
 theta = []
+=======
+theta = -999*np.ones(1000000)
+>>>>>>> dafd5f4d19be935ee76309b719ffe9ed78513fdf
 
 for count,event in enumerate(events):
 
     if count%1000==0:
         print count
 
+<<<<<<< HEAD
+=======
+    #print "---------------------------"
+>>>>>>> dafd5f4d19be935ee76309b719ffe9ed78513fdf
     jets = event[0]
     muons = event[1]
     electrons = event[2]
@@ -226,7 +238,11 @@ for count,event in enumerate(events):
     if n>=3:
         p_top,m_top,pt_top,jet_index,pt_comp_top = top(n)
         if len(p_top)>0:
-            i = np.argmax(p_top)
+            #i = np.argmax(p_top)
+            i = np.argmax(pt_top)
+            #print "Printing the argmax stuff......"
+            #print pt_top
+            #print p_top,i
             top_mass_new = m_top[i]
             top_momentum_new = np.sqrt(p_top[i])
             top_p_transverse_new = pt_top[i]
@@ -242,8 +258,12 @@ for count,event in enumerate(events):
             
             #find angle between MET and pt
             theta_new = angle(i)
+<<<<<<< HEAD
             #theta = np.append(theta,theta_new)
             theta.append(theta_new)
+=======
+            theta[count] = theta_new
+>>>>>>> dafd5f4d19be935ee76309b719ffe9ed78513fdf
 
             #find wjet
             top_jets.append(jets[jet_index[i][0][0]])
@@ -253,8 +273,13 @@ for count,event in enumerate(events):
             n = len(top_jets)
             p_w, m_w = w_jet(n)
             
+<<<<<<< HEAD
             #wjet_mass = np.append(wjet_mass, m_w)
             #wjet_momentum = np.append(wjet_momentum, p_w)
+=======
+            wjet_mass.extend(m_w)
+            wjet_momentum.extend(p_w)
+>>>>>>> dafd5f4d19be935ee76309b719ffe9ed78513fdf
 
 
             #reconstruct second top
@@ -269,6 +294,7 @@ for count,event in enumerate(events):
                 if jets[0][4] >= 0 or jets[n-1][4] >= 0:
                     second_top_m_new,second_top_p_new = second_top(0)
                     
+<<<<<<< HEAD
                     #second_top_mass = np.append(second_top_mass, second_top_m_new)
                     #second_top_momentum = np.append(second_top_momentum, second_top_p_new)
                 elif jets[n-1][4] != jets[0][4] and jets[n-1][4] >= 0:
@@ -276,13 +302,30 @@ for count,event in enumerate(events):
 
                     #second_top_mass = np.append(second_top_mass, second_top_m_new)
                     #second_top_momentum = np.append(second_top_momentum, second_top_p_mew)
+=======
+                    second_top_mass.extend(second_top_m_new)
+                    second_top_momentum.extend(second_top_p_new)
+                elif jets[n-1][4] != jets[0][4] and jets[n-1][4] >= 0:
+                    second_top_m_new,second_top_p_new = second_top(n-1)
 
+                    second_top_mass.extend(second_top_m_new)
+                    second_top_momentum.extend(second_top_p_new)
+
+###########################################################################
+
+wjet_mass = np.array(wjet_mass)
+wjet_momentum = np.array(wjet_momentum)
+>>>>>>> dafd5f4d19be935ee76309b719ffe9ed78513fdf
+
+second_top_mass = np.array(second_top_mass)
+second_top_momentum = np.array(second_top_momentum)
 ###########################################################################
 tag = sys.argv[1].split('/')[-1].split('.')[0]
 
 print "Making the plots....."
 
 plt.figure()
+<<<<<<< HEAD
 #lch.hist_2D(theta,top_momentum[top_momentum>-999], xbins=50,ybins=50)
 #lch.hist_2D(top_mass[top_mass>-999],top_momentum[top_momentum>-999], xbins=50, ybins=50)
 #lch.hist_2D(theta,second_top_mass,xbins=10,ybins=10)
@@ -302,66 +345,27 @@ plt.show()
 
 
 
-
-
-#################################################################################################################
-'''
-# Histograms of momentum
-plt.figure()
-
-plt.subplot(321)
-lch.hist_err(p_jets[p_jets>-999],bins=50,range=(0,400),fmt='o',markersize=5,color='black',ecolor='black')
-plt.title("%s: Jet momentum" % (tag))
-plt.locator_params(nbins=6)
-#plt.xlabel("Momentum")
-
-plt.subplot(322)
-lch.hist_err(p_muons[p_muons>-999],bins=50,range=(0,300),fmt='o',markersize=5,color='red',ecolor='red')
-plt.title("%s: Muon momentum" % (tag))
-#plt.xlabel("Momentum")
-
-plt.subplot(323)
-lch.hist_err(p_electrons[p_electrons>-999],bins=50,range=(0,200),fmt='o',markersize=5,color='green',ecolor='green')
-plt.title("%s: Electron momentum" % (tag))
-#plt.xlabel("Momentum")
-
-plt.subplot(324)
-lch.hist_err(p_photons[p_photons>-999],bins=50,range=(0,200),fmt='o',markersize=5,color='orange',ecolor='orange')
-plt.title("%s: Photon momentum" % (tag))
-#plt.xlabel("Momentum")
-
-plt.subplot(325)
-lch.hist_err(p_met[p_met>-999],bins=50,range=(0,150),fmt='o',markersize=5,color='teal',ecolor='teal')
-plt.title("%s: MET" % (tag))
-plt.locator_params(nbins=6)
-#plt.xlabel("Momentum")
-
-plt.subplots_adjust(hspace = 0.5)
-############################################################################
-
-# Histograms of the number of jets, muons, electrons, and photons
-plt.figure()
-
-plt.subplot(221)
-lch.hist_err(num_jets[num_jets>-999],bins=10,range=(0,10),markersize=5,color='dimgray',ecolor='dimgray')
-plt.title("%s: # Jets" % (tag))
-
-plt.subplot(222)
-lch.hist_err(num_muons[num_muons>-999],bins=10,range=(0,10),markersize=5,color='firebrick',ecolor='firebrick')
-plt.title("%s: # Muons" % (tag))
-
-plt.subplot(223)
-lch.hist_err(num_electrons[num_electrons>-999],bins=10,range=(0,10),markersize=5,color='darkgreen',ecolor='darkgreen')
-plt.title("%s: # Electrons" % (tag))
-
-plt.subplot(224)
-lch.hist_err(num_photons[num_photons>-999],bins=10,range=(0,10),markersize=5,color='darkorange',ecolor='darkorange')
-plt.title("%s: # Photons" % (tag))
-
+=======
+lch.hist_2D(top_momentum[top_momentum>-999],theta[theta>-999],xbins=25,ybins=50,xrange=(0,35),yrange=(0,3.2))
+plt.title("%s: Theta vs. Top Momentum" % (tag))
+>>>>>>> dafd5f4d19be935ee76309b719ffe9ed78513fdf
 
 plt.figure()
-lch.hist_err(bquark_jet_tag[bquark_jet_tag>-999],50,range=(0.5,5),markersize=5,color='navy',ecolor='navy')
-plt.title("%s: bquark_jet_tag" % (tag))
+lch.hist_2D(top_momentum[top_momentum>-999],top_mass[top_momentum>-999],xbins=50,ybins=50,xrange=(0,35),yrange=(0,300))
+plt.title("%s: Top Mass vs. Top Momentum" % (tag))
+
+plt.figure()
+lch.hist_2D(second_top_momentum,second_top_mass,xbins=50,ybins=50,xrange=(0,300),yrange=(0,350))
+plt.title("%s: Second Top Mass vs. Second Top Momentum" % (tag))
+
+plt.figure()
+lch.hist_2D(p_jets[top_momentum>-999],top_momentum[top_momentum>-999],xbins=50,ybins=50,xrange=(0,200),yrange=(0,35))
+plt.title("%s: Top Momentum vs. Jet Momentum" % (tag))
 
 plt.show()
-'''
+
+
+
+
+
+
