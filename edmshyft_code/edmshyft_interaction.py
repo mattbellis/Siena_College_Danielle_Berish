@@ -12,9 +12,8 @@ import sys
 
 import numpy as np
 
-# ==============================================================================
-#  Example Unfolding
-# ==============================================================================
+#tag = "ttbar_MC"
+tag = "data"
 
 # ==============================================================================
 #  Read in the data.
@@ -36,17 +35,17 @@ for i in range(0,10):
     hcsv.append(TH1D(name,"CSV variable", 120, 0,1.2))
 
 hnjets = TH1D("njets","njets", 10,-0.5,9.5)
-htoppt = TH1D("toppt","toppt", 100,100.0,1100.0)
+htoppt = TH1D("toppt","toppt", 70,100.0,800.0)
 
 ###############################################################################
 # Assignment! 
 # Fill these hisograms
 ###############################################################################
-htop_ptmax = TH1D("htop_ptmax","Highest pt top", 110,50,1150.0)
-hcsvjet_ptmax = TH1D("hcsvjet_ptmax","Highest pt CSV jet", 110,50.0,1150.0)
-hmuon_ptmax = TH1D("hmuon_ptmax","Highest pt muon", 110,50.0,1150.0)
+htop_ptmax = TH1D("htop_ptmax","Highest pt top", 80,0,800.0)
+hcsvjet_ptmax = TH1D("hcsvjet_ptmax","Highest pt CSV jet", 110,0.0,800.0)
+hmuon_ptmax = TH1D("hmuon_ptmax","Highest pt muon", 80,0.0,800.0)
 
-hcsvjet_aftercuts = TH2D("hcsvjet_aftercuts","CSV vs. pt", 10,100,1100,10,0,1.0)
+hcsvjet_aftercuts = TH2D("hcsvjet_aftercuts","CSV vs. pt", 7,100,800,10,0,1.0)
 
 hdR = []
 for i in range(0,3):
@@ -58,7 +57,7 @@ for i in range(0,3):
         title = "Top vs. CSV jet"
     elif i==2:
         title = "Muon vs. CSV jet"
-    hdR.append(TH1D(name,title,100,-7,7))
+    hdR.append(TH1D(name,title,65,0,6.5))
 
 
 # Muon
@@ -164,10 +163,6 @@ for n in xrange(nev):
             muon_massmax = 0.105 # For now
             found_muon = True
 
-    htop_ptmax.Fill(top_ptmax)
-    hcsvjet_ptmax.Fill(csvjet_ptmax)
-    hmuon_ptmax.Fill(muon_ptmax)
-
     # If we have found a muon, top jet and a CSV jet, then
     # let's analyze this further. 
     if found_csvjet and found_top and found_muon:
@@ -179,6 +174,15 @@ for n in xrange(nev):
         dR_top_muon = p4_top.DeltaR(p4_muon);
         dR_top_csvjet = p4_top.DeltaR(p4_csvjet);
         dR_muon_csvjet = p4_muon.DeltaR(p4_csvjet);
+
+
+        if dR_top_csvjet>0.3:
+            if top_ptmax>1.0:
+                htop_ptmax.Fill(top_ptmax)
+            if csvjet_ptmax>1.0:
+                hcsvjet_ptmax.Fill(csvjet_ptmax)
+            if muon_ptmax>1.0:
+                hmuon_ptmax.Fill(muon_ptmax)
 
         if abs(dR_top_csvjet) > 1.0:
             hdR[0].Fill(dR_top_muon)
@@ -218,11 +222,16 @@ for i in range(0,3):
     ctop.cd(1+i)
     if i==0:
         htop_ptmax.Draw()
+        htop_ptmax.GetXaxis().SetTitle("Highest p_{T} top jet in the event")
     elif i==1:
         hcsvjet_ptmax.Draw()
+        hcsvjet_ptmax.GetXaxis().SetTitle("Highest p_{T} CSV jet in the event")
     elif i==2:
+        hmuon_ptmax.GetXaxis().SetTitle("Highest p_{T} muon in the event")
         hmuon_ptmax.Draw()
 ctop.Update()
+name = "Plots/pt_%s.png" % (tag)
+ctop.SaveAs(name)
 
 
 cdR = TCanvas( 'cdR', 'dR', 30, 30, 1400, 600)
@@ -230,37 +239,21 @@ cdR.Divide(3,1)
 for i in range(0,3):
     cdR.cd(i+1)
     hdR[i].Draw()
+    hdR[i].GetXaxis().SetTitle("dR")
 cdR.Update()
+name = "Plots/dR_%s.png" % (tag)
+cdR.SaveAs(name)
 
 ccsv2d = TCanvas( 'ccsv2d', 'csv2d', 30, 30, 900, 900)
 ccsv2d.Divide(1,1)
 ccsv2d.cd(i+1)
+hcsvjet_aftercuts.GetYaxis().SetTitle("CSV discriminating variable")
+hcsvjet_aftercuts.GetXaxis().SetTitle("p_{T} of top jet")
 hcsvjet_aftercuts.Draw("COLZ")
 hcsvjet_aftercuts.Draw("TEXT SAME")
 ccsv2d.Update()
-
-'''
-c1 = TCanvas( 'c1', 'MC', 10, 10, 1400, 800 )
-c1.Divide(2,1)
-c1.cd(1)
-hnjets.Draw()
-c1.cd(2)
-htoppt.Draw()
-
-c2 = TCanvas( 'c2', 'MC', 20, 20, 1400, 800 )
-c2.Divide(5,2)
-for i in range(0,10):
-    c2.cd(i+1)
-    hcsv[i].Draw()
-'''
-
-'''
-hMC_true.SetLineColor(kBlack);  
-hMC_true.Draw();  # MC raw 
-c1.SaveAs("MC_true.png")
-'''
-
-#c1.Update()
+name = "Plots/csv_vs_pt_%s.png" % (tag)
+ccsv2d.SaveAs(name)
 
 
 ################################################################################
