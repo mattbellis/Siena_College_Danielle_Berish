@@ -12,8 +12,8 @@ import sys
 
 import numpy as np
 
-#tag = "ttbar_MC"
-tag = "data"
+tag = "ttbar_MC"
+#tag = "data"
 
 # ==============================================================================
 #  Read in the data.
