@@ -79,6 +79,7 @@ csvjet_str = []
 csvjet_str.append("floats_pfShyftTupleJetsLoose_pt_ANA.obj")
 csvjet_str.append("floats_pfShyftTupleJetsLoose_eta_ANA.obj")
 csvjet_str.append("floats_pfShyftTupleJetsLoose_phi_ANA.obj")
+csvjet_str.append("floats_pfShyftTupleJetsLoose_mass_ANA.obj")
 csvjet_str.append("floats_pfShyftTupleJetsLoose_csv_ANA.obj")
 
 p4_muon = TLorentzVector()
@@ -151,8 +152,8 @@ for n in xrange(nev):
             csvjet_ptmax = csvjet_pt
             csvjet_etamax = chain.GetLeaf(csvjet_str[1]).GetValue(i)
             csvjet_phimax = chain.GetLeaf(csvjet_str[2]).GetValue(i)
-            csvjet_massmax = 1.0 # For now
-            csvjet_valmax = chain.GetLeaf(csvjet_str[3]).GetValue(i)
+            csvjet_massmax = chain.GetLeaf(csvjet_str[3]).GetValue(i) # For now
+            csvjet_valmax = chain.GetLeaf(csvjet_str[4]).GetValue(i)
             found_csvjet = True
 
         muon_pt = chain.GetLeaf(muon_str[0]).GetValue(i)
@@ -179,13 +180,12 @@ for n in xrange(nev):
         dR_top_csvjet = p4_top.DeltaR(p4_csvjet);
         dR_muon_csvjet = p4_muon.DeltaR(p4_csvjet);
 
-        hdR[0].Fill(dR_top_muon)
         if abs(dR_top_csvjet) > 1.0:
+            hdR[0].Fill(dR_top_muon)
             hdR[1].Fill(dR_top_csvjet)
-        hdR[2].Fill(dR_muon_csvjet)
+            hdR[2].Fill(dR_muon_csvjet)
 
-        #if abs(dR_top_muon-2.0)<1.0 and abs(dR_top_csvjet-2.0)<1.0 and abs(dR_muon_csvjet-2.0)<1.0:
-        if abs(dR_top_muon-2.0)<1.0 and abs(dR_top_csvjet-2.0)<1.0:
+        if abs(dR_top_muon-3.0)<1.0 and abs(dR_top_csvjet-3.0)<1.0 and abs(dR_muon_csvjet)<1.0:
             print top_ptmax,csvjet_valmax
             hcsvjet_aftercuts.Fill(top_ptmax,csvjet_valmax)
 
