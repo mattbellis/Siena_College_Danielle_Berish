@@ -194,25 +194,6 @@ for n in xrange(nev):
             hcsvjet_aftercuts.Fill(top_ptmax,csvjet_valmax)
 
 
-
-
-
-
-
-    '''
-    if val>0.0:
-        njets += 1
-        #hcsv.Fill(val)
-        for j in range(0,10):
-            ptlo = 0 + j*100.0
-            pthi = 0 + (j+1)*100.0
-            if pt_meas>=ptlo and pt_meas<=pthi:
-                hcsv[j].Fill(val)
-    #print val
-    '''
-    #print "njets: ",njets
-    #hnjets.Fill(njets)
-
 ################################################################################
 # 
 ################################################################################
