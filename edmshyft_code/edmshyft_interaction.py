@@ -72,6 +72,14 @@ top_str.append("floats_pfShyftTupleJetsLooseTopTag_pt_ANA.obj")
 top_str.append("floats_pfShyftTupleJetsLooseTopTag_eta_ANA.obj")
 top_str.append("floats_pfShyftTupleJetsLooseTopTag_phi_ANA.obj")
 top_str.append("floats_pfShyftTupleJetsLooseTopTag_mass_ANA.obj")
+top_str.append("floats_pfShyftTupleJetsLooseTopTag_nSubjets_ANA.obj")
+top_str.append("floats_pfShyftTupleJetsLooseTopTag_minMass_ANA.obj") # pairwise mass close to the W mass (minMass >50)
+
+# From Jim Dolen.
+#The default top tag selection is to require:
+#140< jet mass <250
+#minMass > 50
+#nSubjets >=3
 
 # CSV jets
 csvjet_str = []
@@ -132,6 +140,9 @@ for n in xrange(nev):
     csvjet_massmax = 1.0
     muon_massmax = 1.0
 
+    top_nsubjetsmax = 1.0
+    top_minmassmax = 1.0
+
     csvjet_valmax = 1.0
 
     njets = 0
@@ -144,6 +155,8 @@ for n in xrange(nev):
             top_etamax = chain.GetLeaf(top_str[1]).GetValue(i)
             top_phimax = chain.GetLeaf(top_str[2]).GetValue(i)
             top_massmax = chain.GetLeaf(top_str[3]).GetValue(i)
+            top_nsubjetsmax = chain.GetLeaf(top_str[4]).GetValue(i)
+            top_minmassmax = chain.GetLeaf(top_str[5]).GetValue(i)
             found_top = True
 
         csvjet_pt = chain.GetLeaf(csvjet_str[0]).GetValue(i)
@@ -163,9 +176,25 @@ for n in xrange(nev):
             muon_massmax = 0.105 # For now
             found_muon = True
 
+    #print "----------------------"
+    top_criteria = True
+    #print top_criteria
+    top_criteria *= 140<top_massmax
+    #print 140,top_massmax
+    #print top_criteria
+    #print 250,top_massmax 
+    top_criteria *= 250>top_massmax 
+    #print top_criteria
+    #print top_minmassmax
+    top_criteria *= top_minmassmax>50
+    #print top_criteria
+    #print top_nsubjetsmax
+    top_criteria *= top_nsubjetsmax>=3
+    #print top_criteria
+
     # If we have found a muon, top jet and a CSV jet, then
     # let's analyze this further. 
-    if found_csvjet and found_top and found_muon:
+    if found_csvjet and found_top and found_muon and top_criteria:
 
         p4_top.SetPtEtaPhiM(top_ptmax,top_etamax,top_phimax,top_massmax);
         p4_csvjet.SetPtEtaPhiM(csvjet_ptmax,csvjet_etamax,csvjet_phimax,csvjet_massmax);
