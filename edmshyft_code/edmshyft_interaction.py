@@ -102,7 +102,7 @@ for s in top_str:
 for s in csvjet_str:
     chain.SetBranchStatus(s, 1 )
 
-npossiblejets = 8
+npossiblejets = 4
 
 nev = chain.GetEntries()
 print nev
@@ -205,7 +205,8 @@ for n in xrange(nev):
         dR_muon_csvjet = p4_muon.DeltaR(p4_csvjet);
 
 
-        if dR_top_csvjet>0.3:
+        #if dR_top_csvjet>0.3:
+        if 1:
             if top_ptmax>1.0:
                 htop_ptmax.Fill(top_ptmax)
             if csvjet_ptmax>1.0:
@@ -213,7 +214,8 @@ for n in xrange(nev):
             if muon_ptmax>1.0:
                 hmuon_ptmax.Fill(muon_ptmax)
 
-        if abs(dR_top_csvjet) > 1.0:
+        #if abs(dR_top_csvjet) > 1.0:
+        if 1:
             hdR[0].Fill(dR_top_muon)
             hdR[1].Fill(dR_top_csvjet)
             hdR[2].Fill(dR_muon_csvjet)
