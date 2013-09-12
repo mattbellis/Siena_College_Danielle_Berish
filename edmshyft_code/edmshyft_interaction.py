@@ -83,11 +83,11 @@ top_str.append("floats_pfShyftTupleJetsLooseTopTag_minMass_ANA.obj") # pairwise 
 
 # CSV jets
 csvjet_str = []
-csvjet_str.append("floats_pfShyftTupleJetsLoose_pt_ANA.obj")
-csvjet_str.append("floats_pfShyftTupleJetsLoose_eta_ANA.obj")
-csvjet_str.append("floats_pfShyftTupleJetsLoose_phi_ANA.obj")
-csvjet_str.append("floats_pfShyftTupleJetsLoose_mass_ANA.obj")
-csvjet_str.append("floats_pfShyftTupleJetsLoose_csv_ANA.obj")
+csvjet_str.append("floats_pfShyftTupleJetsLooseAK5_pt_ANA.obj")
+csvjet_str.append("floats_pfShyftTupleJetsLooseAK5_eta_ANA.obj")
+csvjet_str.append("floats_pfShyftTupleJetsLooseAK5_phi_ANA.obj")
+csvjet_str.append("floats_pfShyftTupleJetsLooseAK5_mass_ANA.obj")
+csvjet_str.append("floats_pfShyftTupleJetsLooseAK5_csv_ANA.obj")
 
 p4_muon = TLorentzVector()
 p4_top = TLorentzVector()
