@@ -179,7 +179,13 @@ second_top_momentum = []
 wjet_mass = []
 wjet_momentum = []
 
+<<<<<<< HEAD
+#theta = -999*np.ones(1000000)
+#theta = np.array([])
+theta = []
+=======
 theta = -999*np.ones(1000000)
+>>>>>>> dafd5f4d19be935ee76309b719ffe9ed78513fdf
 
 outfilename = "%s_output.txt" % (tag)
 f = open(outfilename,'w+')
@@ -202,7 +208,10 @@ for count,event in enumerate(events):
     if count%1000==0:
         print count
 
+<<<<<<< HEAD
+=======
     #print "---------------------------"
+>>>>>>> dafd5f4d19be935ee76309b719ffe9ed78513fdf
     jets = event[0]
     muons = event[1]
     electrons = event[2]
@@ -330,11 +339,19 @@ for count,event in enumerate(events):
 
             #find angle between MET and pt
             theta_new = angle(i)
+<<<<<<< HEAD
+            #theta = np.append(theta,theta_new)
+            theta.append(theta_new)
+=======
             theta[count] = theta_new
+<<<<<<< HEAD
             
             output += "%f " % (theta_new)
             output += "\n"
 
+=======
+>>>>>>> dafd5f4d19be935ee76309b719ffe9ed78513fdf
+>>>>>>> 79ebf56a0d8f2b906f9afb6650185947c4c2dc02
 
             #find wjet
             top_jets.append(jets[jet_index[i][0][0]])
@@ -344,8 +361,13 @@ for count,event in enumerate(events):
             n = len(top_jets)
             p_w, m_w = w_jet(n)
             
+<<<<<<< HEAD
+            #wjet_mass = np.append(wjet_mass, m_w)
+            #wjet_momentum = np.append(wjet_momentum, p_w)
+=======
             wjet_mass.extend(m_w)
             wjet_momentum.extend(p_w)
+>>>>>>> dafd5f4d19be935ee76309b719ffe9ed78513fdf
 
 
             #reconstruct second top
@@ -360,6 +382,15 @@ for count,event in enumerate(events):
                 if jets[0][4] >= 0 or jets[n-1][4] >= 0:
                     second_top_m_new,second_top_p_new = second_top(0)
                     
+<<<<<<< HEAD
+                    #second_top_mass = np.append(second_top_mass, second_top_m_new)
+                    #second_top_momentum = np.append(second_top_momentum, second_top_p_new)
+                elif jets[n-1][4] != jets[0][4] and jets[n-1][4] >= 0:
+                    second_top_m_new,second_top_p_new = second_top(n-1)
+
+                    #second_top_mass = np.append(second_top_mass, second_top_m_new)
+                    #second_top_momentum = np.append(second_top_momentum, second_top_p_mew)
+=======
                     second_top_mass.extend(second_top_m_new)
                     second_top_momentum.extend(second_top_p_new)
                 elif jets[n-1][4] != jets[0][4] and jets[n-1][4] >= 0:
@@ -394,6 +425,7 @@ f.close()
 
 wjet_mass = np.array(wjet_mass)
 wjet_momentum = np.array(wjet_momentum)
+>>>>>>> dafd5f4d19be935ee76309b719ffe9ed78513fdf
 
 second_top_mass = np.array(second_top_mass)
 second_top_momentum = np.array(second_top_momentum)
@@ -401,8 +433,30 @@ second_top_momentum = np.array(second_top_momentum)
 print "Making the plots....."
 
 plt.figure()
+<<<<<<< HEAD
+#lch.hist_2D(theta,top_momentum[top_momentum>-999], xbins=50,ybins=50)
+#lch.hist_2D(top_mass[top_mass>-999],top_momentum[top_momentum>-999], xbins=50, ybins=50)
+#lch.hist_2D(theta,second_top_mass,xbins=10,ybins=10)
+'''
+hist,xedges,yedges = np.histogram2d(top_momentum[top_momentum>-999],theta,bins=(25,50))
+extent = [xedges[0],xedges[-1],yedges[0],yedges[-1]]
+plt.imshow(hist,extent=extent,interpolation='nearest',origin='lower')
+'''
+top_momentum = top_momentum[top_momentum>-999]
+theta = np.array(theta)
+
+lch.hist_2D(top_momentum,theta,xrange=(0,50),yrange=(0,3.2),xbins=50,ybins=50)
+#lch.hist_2D(top_momentum,theta,xbins=50,ybins=50)
+
+plt.show()
+
+
+
+
+=======
 lch.hist_2D(top_momentum[top_momentum>-999],theta[theta>-999],xbins=25,ybins=50,xrange=(0,35),yrange=(0,3.2))
 plt.title("%s: Theta vs. Top Momentum" % (tag))
+>>>>>>> dafd5f4d19be935ee76309b719ffe9ed78513fdf
 
 plt.figure()
 lch.hist_2D(top_momentum[top_momentum>-999],top_mass[top_momentum>-999],xbins=50,ybins=50,xrange=(0,35),yrange=(0,300))
