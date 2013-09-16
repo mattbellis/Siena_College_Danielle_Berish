@@ -17,7 +17,18 @@ def momentum(n):
     p = np.sqrt(px**2 + py**2 + pz**2)  
 
     return p
-         
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#calculate pt
+
+def momentum_transverse(n):
+    px = n[1] 
+    py = n[2]
+
+    pt = np.sqrt(px**2 + py**2)
+
+    return pt
+
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #calculate the magnitude of the MET
 
@@ -110,10 +121,10 @@ def angle(n):   # n = index of top candidate
     pt_x = pt_comp_top[n][0]
     pt_y = pt_comp_top[n][1]
 
-    print met_x,met_y,pt_x,pt_y
+    #print met_x,met_y,pt_x,pt_y
 
     pt_len = pt_top[n]
-    print pt_len,np.sqrt(pt_x**2 + pt_y**2)
+    #print pt_len,np.sqrt(pt_x**2 + pt_y**2)
     met_len = np.sqrt(met_x**2 + met_y**2)
 
     k = pt_x*met_x + pt_y*met_y
@@ -125,6 +136,8 @@ def angle(n):   # n = index of top candidate
 
 ###############################################################################
 f = open(sys.argv[1])
+
+tag = sys.argv[1].split('/')[-1].split('.')[0]
 
 print "Reading in the data...."
 events = hep_tools.get_events(f)
@@ -168,6 +181,22 @@ wjet_momentum = []
 
 theta = -999*np.ones(1000000)
 
+outfilename = "%s_output.txt" % (tag)
+f = open(outfilename,'w+')
+output = ""
+
+#outfilename_0 = "%s_muon_pt.txt" % (tag)
+#f_0 = open(outfilename_0,'w+')
+output_0 = ""
+
+#outfilename_1 = "%s_met.txt" % (tag)
+#f_1 = open(outfilename_1,'w+')
+output_1 = ""
+
+#outfilename_2 = "%s_top_cand_mass.txt" % (tag)
+#f_2 = open(outfilename_2,'w+')
+output_2 = ""
+
 for count,event in enumerate(events):
 
     if count%1000==0:
@@ -193,6 +222,8 @@ for count,event in enumerate(events):
         bquark_jet_tag[nbq] = tag
         nbq += 1
 
+    muon_momentum = np.array([])
+    muon_pt = np.array([])
     for muon in muons:
         n = len(muons)
         num_muons[count] = n
@@ -200,6 +231,29 @@ for count,event in enumerate(events):
         p = momentum(muon)
         p_muons[npm] = p
         npm += 1
+
+        muon_momentum = np.append(muon_momentum,p)
+
+        pt = momentum_transverse(muon)
+        muon_pt = np.append(muon_pt,pt)
+        
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~   
+    if len(muon_momentum) > 0:
+        i = np.argmax(muon_momentum)
+        output += "%f " % (muon_momentum[i])
+        output += " "
+    elif len(muon_momentum) == 0:
+        output += "%f " % (-1)
+        output += " " 
+
+    if len(muon_pt) > 0:
+        i = np.argmax(muon_pt)
+        output_0 += "%f " % (muon_pt[i])
+        output_0 += "\n"
+    elif len(muon_pt) == 0:
+        output_0 += "%f " % (-1)
+        output_0 += "\n" 
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     for electron in electrons:        
         n = len(electrons)
@@ -221,12 +275,29 @@ for count,event in enumerate(events):
     p_met[nm] = p
     nm += 1
 
+    output += "%f " % (p)
+    output += " "
+
+    output_1 += "%f " % (p)
+    output_1 += "\n" 
+
     ################################
     #reconstruct top
     n = len(jets)
     if n<3:
-        None
-    if n>=3:
+        num = -1
+        output += "%f " % (num)
+        output += " "
+        output += "%f " % (num)
+        output += " "
+        output += "%f " % (num)
+        output += " " 
+        output += "%f " % (num)
+        output += "\n"
+
+        output_2 += "%f " % (num)
+        output_2 += "\n"
+    elif n>=3:
         p_top,m_top,pt_top,jet_index,pt_comp_top = top(n)
         if len(p_top)>0:
             #i = np.argmax(p_top)
@@ -246,10 +317,24 @@ for count,event in enumerate(events):
 
             top_pt[tpt] = top_p_transverse_new
             tpt +=1 
-            
+           
+            output += "%f " % (top_mass_new)
+            output += " "
+            output += "%f " % (top_momentum_new)
+            output += " " 
+            output += "%f " % (top_p_transverse_new)
+            output += " "
+
+            output_2 += "%f " % (top_mass_new)
+            output_2 += "\n"
+
             #find angle between MET and pt
             theta_new = angle(i)
             theta[count] = theta_new
+            
+            output += "%f " % (theta_new)
+            output += "\n"
+
 
             #find wjet
             top_jets.append(jets[jet_index[i][0][0]])
@@ -283,6 +368,28 @@ for count,event in enumerate(events):
                     second_top_mass.extend(second_top_m_new)
                     second_top_momentum.extend(second_top_p_new)
 
+        else:
+            num = -1
+            output += "%f " % (num)
+            output += " "
+            output += "%f " % (num)
+            output += " "
+            output += "%f " % (num)
+            output += " " 
+            output += "%f " % (num)
+            output += "\n"
+
+            output_2 += "%f " % (num)
+            output_2 += "\n"
+
+f.write(output)
+f.close()
+#f_0.write(output_0)
+#f_0.close()
+#f_1.write(output_1)
+#f_1.close()
+#f_2.write(output_2)
+#f_2.close()
 ###########################################################################
 
 wjet_mass = np.array(wjet_mass)
@@ -291,8 +398,6 @@ wjet_momentum = np.array(wjet_momentum)
 second_top_mass = np.array(second_top_mass)
 second_top_momentum = np.array(second_top_momentum)
 ###########################################################################
-tag = sys.argv[1].split('/')[-1].split('.')[0]
-
 print "Making the plots....."
 
 plt.figure()
@@ -312,9 +417,5 @@ lch.hist_2D(p_jets[top_momentum>-999],top_momentum[top_momentum>-999],xbins=50,y
 plt.title("%s: Top Momentum vs. Jet Momentum" % (tag))
 
 plt.show()
-
-
-
-
 
 
