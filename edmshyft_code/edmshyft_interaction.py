@@ -41,18 +41,6 @@ htoppt = TH1D("toppt","toppt", 70,100.0,800.0)
 # Assignment! 
 # Fill these hisograms
 ###############################################################################
-<<<<<<< HEAD
-htop_ptmax = TH1D("htop_ptmax","Highest pt top", 100,-100,500.0)
-htop_eta = TH1D("htop_eta","Eta for the top jets", 3,-1,1)
-htop_phi = TH1D("htop_phi","Phi for the top jets", 3,-1,1)
-htop_mass = TH1D("htop_mass","Mass for the top jets", 5,-5,200)
-htop_nSubjets = TH1D("htop_nSubjets","Number of subjets for the top jets", 5,-5,5)
-htop_minMass = TH1D("htop_minMass","Min mass for the top jets", 5,-5,100)
-
-hcsvjet_ptmax = TH1D("hcsvjet_ptmax","Highest pt CSV jet", 100,-100.0,500.0)
-hcsvjet_eta = TH1D("hcsvjet_eta","CSV jet eta",10,-5,5)
-hcsvjet_phi = TH1D("hcsvjet_phi","CSV jet phi",10,-5,5)
-=======
 htop_ptmax = TH1D("htop_ptmax","Highest pt top", 80,0,800.0)
 hcsvjet_ptmax = TH1D("hcsvjet_ptmax","Highest pt CSV jet", 110,0.0,800.0)
 hmuon_ptmax = TH1D("hmuon_ptmax","Highest pt muon", 80,0.0,800.0)
@@ -70,11 +58,7 @@ for i in range(0,3):
     elif i==2:
         title = "Muon vs. CSV jet"
     hdR.append(TH1D(name,title,65,0,6.5))
->>>>>>> 79ebf56a0d8f2b906f9afb6650185947c4c2dc02
 
-hmuon_ptmax = TH1D("hmoun_ptmax","Highest pt Muon", 100,-100,500)
-hmuon_eta = TH1D("hmuon_eta","Muon eta", 10,-5,5)
-hmuon_phi = TH1D("hmuon_phi","Muon phi", 10,-5,5)
 
 # Muon
 muon_str = []
@@ -89,9 +73,6 @@ top_str.append("floats_pfShyftTupleJetsLooseTopTag_eta_ANA.obj")
 top_str.append("floats_pfShyftTupleJetsLooseTopTag_phi_ANA.obj")
 top_str.append("floats_pfShyftTupleJetsLooseTopTag_mass_ANA.obj")
 top_str.append("floats_pfShyftTupleJetsLooseTopTag_nSubjets_ANA.obj")
-<<<<<<< HEAD
-top_str.append("floats_pfShyftTupleJetsLooseTopTag_minMass_ANA.obj")
-=======
 top_str.append("floats_pfShyftTupleJetsLooseTopTag_minMass_ANA.obj") # pairwise mass close to the W mass (minMass >50)
 
 # From Jim Dolen.
@@ -99,7 +80,6 @@ top_str.append("floats_pfShyftTupleJetsLooseTopTag_minMass_ANA.obj") # pairwise 
 #140< jet mass <250
 #minMass > 50
 #nSubjets >=3
->>>>>>> 79ebf56a0d8f2b906f9afb6650185947c4c2dc02
 
 # CSV jets
 csvjet_str = []
@@ -144,20 +124,6 @@ for n in xrange(nev):
     #htoppt.Fill(pt_meas)
 
     #print "---------"
-<<<<<<< HEAD
-    top_ptmax = 0.0
-    #top_eta = 0.0
-    #top_phi = 0.0
-    #top_mass = 0.0
-    #top_nSubjets = 0.0
-    #top_minMass = 0.0
-
-    csvjet_ptmax = 0.0
-    muon_ptmax = 0.0
-    
-    njets = 0
-    
-=======
     top_ptmax = 1.0
     csvjet_ptmax = 1.0
     muon_ptmax = 1.0
@@ -181,25 +147,11 @@ for n in xrange(nev):
 
     njets = 0
 
->>>>>>> 79ebf56a0d8f2b906f9afb6650185947c4c2dc02
     for i in xrange(npossiblejets):
         
         top_pt = chain.GetLeaf(top_str[0]).GetValue(i)
         if top_pt > top_ptmax:
             top_ptmax = top_pt
-<<<<<<< HEAD
-        top_eta = chain.GetLeaf(top_str[1]).GetValue(i)
-        top_phi = chain.GetLeaf(top_str[2]).GetValue(i)
-        top_mass = chain.GetLeaf(top_str[3]).GetValue(i)
-        top_nSubjets = chain.GetLeaf(top_str[4]).GetValue(i)
-        top_minMass = chain.GetLeaf(top_str[5]).GetValue(i)
-        
-        csvjet_pt = chain.GetLeaf(csvjet_str[1]).GetValue(i)
-        if csvjet_pt > csvjet_ptmax:
-            csvjet_ptmax = csvjet_pt
-        csvjet_eta = chain.GetLeaf(csvjet_str[2]).GetValue(i)
-        csvjet_phi = chain.GetLeaf(csvjet_str[3]).GetValue(i)
-=======
             top_etamax = chain.GetLeaf(top_str[1]).GetValue(i)
             top_phimax = chain.GetLeaf(top_str[2]).GetValue(i)
             top_massmax = chain.GetLeaf(top_str[3]).GetValue(i)
@@ -215,26 +167,10 @@ for n in xrange(nev):
             csvjet_massmax = chain.GetLeaf(csvjet_str[3]).GetValue(i) # For now
             csvjet_valmax = chain.GetLeaf(csvjet_str[4]).GetValue(i)
             found_csvjet = True
->>>>>>> 79ebf56a0d8f2b906f9afb6650185947c4c2dc02
 
         muon_pt = chain.GetLeaf(muon_str[0]).GetValue(i)
         if muon_pt > muon_ptmax:
             muon_ptmax = muon_pt
-<<<<<<< HEAD
-        muon_eta = chain.GetLeaf(muon_str[1]).GetValue(i)
-        muon_phi = chain.GetLeaf(muon_str[2]).GetValue(i)
-
-    htop_ptmax.Fill(top_ptmax)
-    htop_eta.Fill(top_eta)
-    htop_phi.Fill(top_phi)
-    htop_mass.Fill(top_mass)
-    htop_nSubjets.Fill(top_nSubjets)
-    htop_minMass.Fill(top_minMass)
-
-    hcsvjet_ptmax.Fill(csvjet_ptmax)
-    hcsvjet_eta.Fill(csvjet_eta)
-    hcsvjet_phi.Fill(csvjet_phi)
-=======
             muon_etamax = chain.GetLeaf(muon_str[1]).GetValue(i)
             muon_phimax = chain.GetLeaf(muon_str[2]).GetValue(i)
             muon_massmax = 0.105 # For now
@@ -293,11 +229,7 @@ for n in xrange(nev):
 
 
 
->>>>>>> 79ebf56a0d8f2b906f9afb6650185947c4c2dc02
 
-    hmuon_ptmax.Fill(muon_ptmax)
-    hmuon_eta.Fill(muon_eta)
-    hmuon_phi.Fill(muon_phi)
 
     '''
     if val>0.0:
@@ -316,76 +248,6 @@ for n in xrange(nev):
 ################################################################################
 # 
 ################################################################################
-<<<<<<< HEAD
-c0 = TCanvas( 'c0', 'Top pt', 10, 10, 1400, 800 )
-c0.Divide(1,1)
-c0.cd(1)
-htop_ptmax.Draw()
-c0.Update()
-
-c1 = TCanvas( 'ctop_1', 'Top eta', 10, 10, 1400, 800 )
-c1.Divide(1,1)
-c1.cd(1)
-htop_eta.Draw()
-c1.Update()
-
-c2 = TCanvas( 'ctop_2', 'Top phi', 10, 10, 1400, 800 )
-c2.Divide(1,1)
-c2.cd(1)
-htop_phi.Draw()
-c2.Update()
-
-c3 = TCanvas( 'ctop_3', 'Top mass', 10, 10, 1400, 800 )
-c3.Divide(1,1)
-c3.cd(1)
-htop_mass.Draw()
-c3.Update()
-
-c4 = TCanvas( 'ctop_4', 'Top nSubjets', 10, 10, 1400, 800 )
-c4.Divide(1,1)
-c4.cd(1)
-htop_nSubjets.Draw()
-c4.Update()
-
-c5 = TCanvas( 'ctop_5', 'Top minMass', 10, 10, 1400, 800 )
-c5.Divide(1,1)
-c5.cd(1)
-htop_minMass.Draw()
-c5.Update()
-
-
-ccsvjet = TCanvas( 'ccsvjet', 'CSV Jet pt', 10, 10, 1400, 800)
-ccsvjet.Divide(1,1)
-ccsvjet.cd(1)
-hcsvjet_ptmax.Draw()
-ccsvjet.Update()
-
-
-
-
-'''
-c1 = TCanvas( 'c1', 'MC', 10, 10, 1400, 800 )
-c1.Divide(2,1)
-c1.cd(1)
-hnjets.Draw()
-c1.cd(2)
-htoppt.Draw()
-
-c2 = TCanvas( 'c2', 'MC', 20, 20, 1400, 800 )
-c2.Divide(5,2)
-for i in range(0,10):
-    c2.cd(i+1)
-    hcsv[i].Draw()
-'''
-
-'''
-hMC_true.SetLineColor(kBlack);  
-hMC_true.Draw();  # MC raw 
-c1.SaveAs("MC_true.png")
-'''
-
-#c1.Update()
-=======
 ctop = TCanvas( 'ctop', 'Top pt', 10, 10, 1400, 600 )
 ctop.Divide(3,1)
 for i in range(0,3):
@@ -424,7 +286,6 @@ hcsvjet_aftercuts.Draw("TEXT SAME")
 ccsv2d.Update()
 name = "Plots/csv_vs_pt_%s.png" % (tag)
 ccsv2d.SaveAs(name)
->>>>>>> 79ebf56a0d8f2b906f9afb6650185947c4c2dc02
 
 
 ################################################################################
