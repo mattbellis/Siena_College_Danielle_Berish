@@ -38,12 +38,25 @@ hnjets = TH1D("njets","njets", 10,-0.5,9.5)
 htoppt = TH1D("toppt","toppt", 70,100.0,800.0)
 
 ###############################################################################
-# Assignment! 
+#AK5 Assignment! 
 # Fill these hisograms
 ###############################################################################
+htop_eta = TH1D("htop_eta","Eta for the top jets", 50,-10,10)
+htop_phi = TH1D("htop_phi","Phi for the top jets", 50,-10,10)
+htop_mass = TH1D("htop_mass","Mass for the top jets", 50,-20,200)
+htop_nSubjets = TH1D("htop_nSubjets","Number of subjets for the top jets", 11,-0.5,10.5)
+htop_minMass = TH1D("htop_minMass","Min mass for the top jets", 50,-5,100)
+
+hcsvjet_eta = TH1D("hcsvjet_eta","CSV jet eta",50,-5,5)
+hcsvjet_phi = TH1D("hcsvjet_phi","CSV jet phi",50,-5,5)
+hcsvjet_mass = TH1D("hcsvjet_mass","CSV jet mass",50,-200,200)
+
+hmuon_eta = TH1D("hmuon_eta","Muon eta", 50,-5,5)
+hmuon_phi = TH1D("hmuon_phi","Muon phi", 50,-5,5)
+
+hmuon_ptmax = TH1D("hmuon_ptmax","Highest pt muon", 80,0.0,800.0)
 htop_ptmax = TH1D("htop_ptmax","Highest pt top", 80,0,800.0)
 hcsvjet_ptmax = TH1D("hcsvjet_ptmax","Highest pt CSV jet", 110,0.0,800.0)
-hmuon_ptmax = TH1D("hmuon_ptmax","Highest pt muon", 80,0.0,800.0)
 
 hcsvjet_aftercuts = TH2D("hcsvjet_aftercuts","CSV vs. pt", 7,100,800,10,0,1.0)
 
@@ -72,14 +85,16 @@ top_str.append("floats_pfShyftTupleJetsLooseTopTag_pt_ANA.obj")
 top_str.append("floats_pfShyftTupleJetsLooseTopTag_eta_ANA.obj")
 top_str.append("floats_pfShyftTupleJetsLooseTopTag_phi_ANA.obj")
 top_str.append("floats_pfShyftTupleJetsLooseTopTag_mass_ANA.obj")
+top_str.append("floats_pfShyftTupleJetsLooseTopTag_nSubjets_ANA.obj")
+top_str.append("floats_pfShyftTupleJetsLooseTopTag_minMass_ANA.obj")
 
 # CSV jets
 csvjet_str = []
-csvjet_str.append("floats_pfShyftTupleJetsLoose_pt_ANA.obj")
-csvjet_str.append("floats_pfShyftTupleJetsLoose_eta_ANA.obj")
-csvjet_str.append("floats_pfShyftTupleJetsLoose_phi_ANA.obj")
-csvjet_str.append("floats_pfShyftTupleJetsLoose_mass_ANA.obj")
-csvjet_str.append("floats_pfShyftTupleJetsLoose_csv_ANA.obj")
+csvjet_str.append("floats_pfShyftTupleJetsLooseAK5_pt_ANA.obj")
+csvjet_str.append("floats_pfShyftTupleJetsLooseAK5_eta_ANA.obj")
+csvjet_str.append("floats_pfShyftTupleJetsLooseAK5_phi_ANA.obj")
+csvjet_str.append("floats_pfShyftTupleJetsLooseAK5_mass_ANA.obj")
+csvjet_str.append("floats_pfShyftTupleJetsLooseAK5_csv_ANA.obj")
 
 p4_muon = TLorentzVector()
 p4_top = TLorentzVector()
@@ -135,6 +150,9 @@ for n in xrange(nev):
     csvjet_valmax = 1.0
 
     njets = 0
+    
+    top_nSubjetsmax = 1.0
+    top_minMassmax = 1.0
 
     for i in xrange(npossiblejets):
         
@@ -144,6 +162,8 @@ for n in xrange(nev):
             top_etamax = chain.GetLeaf(top_str[1]).GetValue(i)
             top_phimax = chain.GetLeaf(top_str[2]).GetValue(i)
             top_massmax = chain.GetLeaf(top_str[3]).GetValue(i)
+            top_nSubjetsmax = chain.GetLeaf(top_str[4]).GetValue(i)
+            top_minMassmax = chain.GetLeaf(top_str[5]).GetValue(i)
             found_top = True
 
         csvjet_pt = chain.GetLeaf(csvjet_str[0]).GetValue(i)
@@ -162,6 +182,22 @@ for n in xrange(nev):
             muon_phimax = chain.GetLeaf(muon_str[2]).GetValue(i)
             muon_massmax = 0.105 # For now
             found_muon = True
+    
+    htop_ptmax.Fill(top_ptmax)
+    htop_eta.Fill(top_etamax)
+    htop_phi.Fill(top_phimax)
+    htop_mass.Fill(top_massmax)
+    htop_nSubjets.Fill(top_nSubjetsmax)
+    htop_minMass.Fill(top_minMassmax)
+
+    hcsvjet_ptmax.Fill(csvjet_ptmax)
+    hcsvjet_eta.Fill(csvjet_etamax)
+    hcsvjet_phi.Fill(csvjet_phimax)
+
+     
+    hmuon_ptmax.Fill(muon_ptmax)
+    hmuon_eta.Fill(muon_etamax)
+    hmuon_phi.Fill(muon_phimax)
 
     # If we have found a muon, top jet and a CSV jet, then
     # let's analyze this further. 
@@ -235,6 +271,70 @@ hcsvjet_aftercuts.Draw("TEXT SAME")
 ccsv2d.Update()
 name = "Plots/csv_vs_pt_%s.png" % (tag)
 ccsv2d.SaveAs(name)
+
+c1 = TCanvas( 'ctop_1', 'Top eta', 10, 10, 1400, 800 )
+c1.Divide(1,1)
+c1.cd(1)
+htop_eta.Draw()
+c1.Update()
+
+c2 = TCanvas( 'ctop_2', 'Top phi', 10, 10, 1400, 800 )
+c2.Divide(1,1)
+c2.cd(1)
+htop_phi.Draw()
+c2.Update()
+
+c3 = TCanvas( 'ctop_3', 'Top mass', 10, 10, 1400, 800 )
+c3.Divide(1,1)
+c3.cd(1)
+htop_mass.Draw()
+c3.Update()
+
+c4 = TCanvas( 'ctop_4', 'Top nSubjets', 10, 10, 1400, 800 )
+c4.Divide(1,1)
+c4.cd(1)
+htop_nSubjets.Draw()
+c4.Update()
+
+c5 = TCanvas( 'ctop_5', 'Top minMass', 10, 10, 1400, 800 )
+c5.Divide(1,1)
+c5.cd(1)
+htop_minMass.Draw()
+c5.Update()
+
+#~~ 
+c6 = TCanvas( 'ccsv_6', 'CSV jet eta', 10, 10, 1400, 800 )
+c6.Divide(1,1)
+c6.cd(1)
+hcsvjet_eta.Draw()
+c6.Update()
+
+c7 = TCanvas( 'ccsv_7', 'CSV jet phi', 10, 10, 1400, 800 )
+c7.Divide(1,1)
+c7.cd(1)
+hcsvjet_phi.Draw()
+c7.Update()
+
+'''
+c8 = TCanvas( 'ccsv_8', 'CSV jet mass', 10, 10, 1400, 800 )
+c8.Divide(1,1)
+c8.cd(1)
+hcsvjet_mass.Draw()
+c8.Update()
+'''
+
+c9 = TCanvas( 'cmuon_9', 'Muon eta', 10, 10, 1400, 800 )
+c9.Divide(1,1)
+c9.cd(1)
+hmuon_eta.Draw()
+c9.Update()
+
+c10 = TCanvas( 'cmuon_10', 'Muon phi', 10, 10, 1400, 800 )
+c10.Divide(1,1)
+c10.cd(1)
+hmuon_phi.Draw()
+c10.Update()
+
 
 
 ################################################################################
