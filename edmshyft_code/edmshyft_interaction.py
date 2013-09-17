@@ -221,7 +221,8 @@ for n in xrange(nev):
             hdR[2].Fill(dR_muon_csvjet)
 
         #if abs(dR_top_muon-3.0)<1.0 and abs(dR_top_csvjet-3.0)<1.0 and abs(dR_muon_csvjet)<1.0:
-        if abs(dR_top_csvjet-3.0)<1.0:
+        #if abs(dR_top_csvjet-3.0)<1.0:
+        if dR_top_muon>1.5:
             print top_ptmax,csvjet_valmax
             hcsvjet_aftercuts.Fill(top_ptmax,csvjet_valmax)
 
