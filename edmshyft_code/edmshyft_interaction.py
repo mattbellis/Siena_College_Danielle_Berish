@@ -89,6 +89,7 @@ csvjet_str.append("floats_pfShyftTupleJetsLooseAK5_phi_ANA.obj")
 csvjet_str.append("floats_pfShyftTupleJetsLooseAK5_mass_ANA.obj")
 csvjet_str.append("floats_pfShyftTupleJetsLooseAK5_csv_ANA.obj")
 
+p4 = TLorentzVector()
 p4_muon = TLorentzVector()
 p4_top = TLorentzVector()
 p4_csvjet = TLorentzVector()
@@ -173,21 +174,25 @@ for n in xrange(nev):
     bjet_index = -1
     for i in xrange(npossiblejets):
         csvjet_pt = chain.GetLeaf(csvjet_str[0]).GetValue(i)
-        csvjet_etamax = chain.GetLeaf(csvjet_str[1]).GetValue(i)
-        csvjet_phimax = chain.GetLeaf(csvjet_str[2]).GetValue(i)
-        csvjet_massmax = chain.GetLeaf(csvjet_str[3]).GetValue(i) # For now
-        csvjet_valmax = chain.GetLeaf(csvjet_str[4]).GetValue(i)
+        if csvjet_pt > 1.0:
+            csvjet_etamax = chain.GetLeaf(csvjet_str[1]).GetValue(i)
+            csvjet_phimax = chain.GetLeaf(csvjet_str[2]).GetValue(i)
+            csvjet_massmax = chain.GetLeaf(csvjet_str[3]).GetValue(i) # For now
+            csvjet_valmax = chain.GetLeaf(csvjet_str[4]).GetValue(i)
 
-        print csvjet_pt
-        p4_csvjet.SetPtEtaPhiM(csvjet_pt,csvjet_etamax,csvjet_phimax,csvjet_massmax);
+            #print csvjet_pt
+            p4.SetPtEtaPhiM(csvjet_pt,csvjet_etamax,csvjet_phimax,csvjet_massmax);
+            #print "SET!"
 
-        dR_top_csvjet = p4_top.DeltaR(p4_csvjet);
+            dR = p4_top.DeltaR(p4);
 
-        if csvjet_pt > csvjet_ptmax and dR_top_csvjet>0.5:
-            csvjet_ptmax = csvjet_pt
-            bjet_index = i
-            found_csvjet = True
-            p4_csvjet.SetPtEtaPhiM(csvjet_pt,csvjet_etamax,csvjet_phimax,csvjet_massmax);
+            if csvjet_pt > csvjet_ptmax and dR>0.5:
+                csvjet_ptmax = csvjet_pt
+                bjet_index = i
+                found_csvjet = True
+
+                p4_csvjet.SetPtEtaPhiM(csvjet_pt,csvjet_etamax,csvjet_phimax,csvjet_massmax);
+                dR_top_csvjet = dR
 
 
     # Find the b-jet in the opposite hemisphere!
