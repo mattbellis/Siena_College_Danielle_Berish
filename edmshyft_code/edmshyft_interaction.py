@@ -147,27 +147,52 @@ for n in xrange(nev):
 
     njets = 0
 
+    top_index = -1
+
+    # Find the top jet!
     for i in xrange(npossiblejets):
         
         top_pt = chain.GetLeaf(top_str[0]).GetValue(i)
         if top_pt > top_ptmax:
             top_ptmax = top_pt
-            top_etamax = chain.GetLeaf(top_str[1]).GetValue(i)
-            top_phimax = chain.GetLeaf(top_str[2]).GetValue(i)
-            top_massmax = chain.GetLeaf(top_str[3]).GetValue(i)
-            top_nsubjetsmax = chain.GetLeaf(top_str[4]).GetValue(i)
-            top_minmassmax = chain.GetLeaf(top_str[5]).GetValue(i)
-            found_top = True
+            top_index = i
 
+    if top_index>=0:
+        top_ptmax = chain.GetLeaf(top_str[0]).GetValue(top_index)
+        top_etamax = chain.GetLeaf(top_str[1]).GetValue(top_index)
+        top_phimax = chain.GetLeaf(top_str[2]).GetValue(top_index)
+        top_massmax = chain.GetLeaf(top_str[3]).GetValue(top_index)
+        top_nsubjetsmax = chain.GetLeaf(top_str[4]).GetValue(top_index)
+        top_minmassmax = chain.GetLeaf(top_str[5]).GetValue(top_index)
+        found_top = True
+
+        #print top_ptmax
+        p4_top.SetPtEtaPhiM(top_ptmax,top_etamax,top_phimax,top_massmax);
+
+    # Find the b-jet in the opposite hemisphere!
+    bjet_index = -1
+    for i in xrange(npossiblejets):
         csvjet_pt = chain.GetLeaf(csvjet_str[0]).GetValue(i)
-        if csvjet_pt > csvjet_ptmax:
-            csvjet_ptmax = csvjet_pt
-            csvjet_etamax = chain.GetLeaf(csvjet_str[1]).GetValue(i)
-            csvjet_phimax = chain.GetLeaf(csvjet_str[2]).GetValue(i)
-            csvjet_massmax = chain.GetLeaf(csvjet_str[3]).GetValue(i) # For now
-            csvjet_valmax = chain.GetLeaf(csvjet_str[4]).GetValue(i)
-            found_csvjet = True
+        csvjet_etamax = chain.GetLeaf(csvjet_str[1]).GetValue(i)
+        csvjet_phimax = chain.GetLeaf(csvjet_str[2]).GetValue(i)
+        csvjet_massmax = chain.GetLeaf(csvjet_str[3]).GetValue(i) # For now
+        csvjet_valmax = chain.GetLeaf(csvjet_str[4]).GetValue(i)
 
+        print csvjet_pt
+        p4_csvjet.SetPtEtaPhiM(csvjet_pt,csvjet_etamax,csvjet_phimax,csvjet_massmax);
+
+        dR_top_csvjet = p4_top.DeltaR(p4_csvjet);
+
+        if csvjet_pt > csvjet_ptmax and dR_top_csvjet>0.5:
+            csvjet_ptmax = csvjet_pt
+            bjet_index = i
+            found_csvjet = True
+            p4_csvjet.SetPtEtaPhiM(csvjet_pt,csvjet_etamax,csvjet_phimax,csvjet_massmax);
+
+
+    # Find the b-jet in the opposite hemisphere!
+    muon_index = -1
+    for i in xrange(npossiblejets):
         muon_pt = chain.GetLeaf(muon_str[0]).GetValue(i)
         if muon_pt > muon_ptmax:
             muon_ptmax = muon_pt
@@ -175,6 +200,7 @@ for n in xrange(nev):
             muon_phimax = chain.GetLeaf(muon_str[2]).GetValue(i)
             muon_massmax = 0.105 # For now
             found_muon = True
+            p4_muon.SetPtEtaPhiM(muon_ptmax,muon_etamax,muon_phimax,muon_massmax);
 
     #print "----------------------"
     top_criteria = True
@@ -196,9 +222,8 @@ for n in xrange(nev):
     # let's analyze this further. 
     if found_csvjet and found_top and found_muon and top_criteria:
 
-        p4_top.SetPtEtaPhiM(top_ptmax,top_etamax,top_phimax,top_massmax);
-        p4_csvjet.SetPtEtaPhiM(csvjet_ptmax,csvjet_etamax,csvjet_phimax,csvjet_massmax);
-        p4_muon.SetPtEtaPhiM(muon_ptmax,muon_etamax,muon_phimax,muon_massmax);
+        #p4_top.SetPtEtaPhiM(top_ptmax,top_etamax,top_phimax,top_massmax);
+        #p4_csvjet.SetPtEtaPhiM(csvjet_ptmax,csvjet_etamax,csvjet_phimax,csvjet_massmax);
 
         dR_top_muon = p4_top.DeltaR(p4_muon);
         dR_top_csvjet = p4_top.DeltaR(p4_csvjet);
