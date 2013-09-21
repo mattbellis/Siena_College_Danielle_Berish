@@ -104,5 +104,6 @@ print m.print_matrix()
 
 frac_sig = np.cos(values['fraction'])**2
 print "Fraction of signal: %f" % (frac_sig)
+print "Fraction of bkg: %f" % (1.0-frac_sig)
 
 
