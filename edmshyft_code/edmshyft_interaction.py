@@ -144,7 +144,7 @@ for n in xrange(nev):
     top_nsubjetsmax = 1.0
     top_minmassmax = 1.0
 
-    csvjet_valmax = 1.0
+    csvjet_valmax = -1.0
 
     njets = 0
 
@@ -178,7 +178,6 @@ for n in xrange(nev):
             csvjet_etamax = chain.GetLeaf(csvjet_str[1]).GetValue(i)
             csvjet_phimax = chain.GetLeaf(csvjet_str[2]).GetValue(i)
             csvjet_massmax = chain.GetLeaf(csvjet_str[3]).GetValue(i) # For now
-            csvjet_valmax = chain.GetLeaf(csvjet_str[4]).GetValue(i)
 
             #print csvjet_pt
             p4.SetPtEtaPhiM(csvjet_pt,csvjet_etamax,csvjet_phimax,csvjet_massmax);
@@ -192,6 +191,8 @@ for n in xrange(nev):
                 found_csvjet = True
 
                 p4_csvjet.SetPtEtaPhiM(csvjet_pt,csvjet_etamax,csvjet_phimax,csvjet_massmax);
+                csvjet_valmax = chain.GetLeaf(csvjet_str[4]).GetValue(i)
+
                 dR_top_csvjet = dR
 
 
@@ -204,6 +205,7 @@ for n in xrange(nev):
             muon_etamax = chain.GetLeaf(muon_str[1]).GetValue(i)
             muon_phimax = chain.GetLeaf(muon_str[2]).GetValue(i)
             muon_massmax = 0.105 # For now
+
             found_muon = True
             p4_muon.SetPtEtaPhiM(muon_ptmax,muon_etamax,muon_phimax,muon_massmax);
 
