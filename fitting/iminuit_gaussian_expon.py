@@ -100,9 +100,9 @@ print m.get_fmin()
 values = m.values
 print values
 
-frac_sig = np.cos(values['fraction'])**2
-#print frac_sig
-#print m.covariance
 print m.print_matrix()
+
+frac_sig = np.cos(values['fraction'])**2
+print "Fraction of signal: %f" % (frac_sig)
 
 
