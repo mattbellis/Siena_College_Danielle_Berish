@@ -185,6 +185,7 @@ for n in xrange(nev):
 
             dR = p4_top.DeltaR(p4);
 
+            # Is this right?
             if csvjet_pt > csvjet_ptmax and dR>0.8:
                 csvjet_ptmax = csvjet_pt
                 bjet_index = i
