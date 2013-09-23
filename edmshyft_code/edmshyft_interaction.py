@@ -66,6 +66,13 @@ muon_str.append("floats_pfShyftTupleMuons_pt_ANA.obj")
 muon_str.append("floats_pfShyftTupleMuons_eta_ANA.obj")
 muon_str.append("floats_pfShyftTupleMuons_phi_ANA.obj")
 
+# Top Truth
+top_truth_str = []
+top_truth_str.append("floats_pfShyftTupleTopQuarks_pt_ANA.obj")
+top_truth_str.append("floats_pfShyftTupleTopQuarks_eta_ANA.obj")
+top_truth_str.append("floats_pfShyftTupleTopQuarks_phi_ANA.obj")
+top_truth_str.append("floats_pfShyftTupleTopQuarks_mass_ANA.obj")
+
 # Top
 top_str = []
 top_str.append("floats_pfShyftTupleJetsLooseTopTag_pt_ANA.obj")
@@ -94,6 +101,10 @@ p4_muon = TLorentzVector()
 p4_top = TLorentzVector()
 p4_csvjet = TLorentzVector()
 
+p4_top_truth = []
+p4_top_truth.append(TLorentzVector())
+p4_top_truth.append(TLorentzVector())
+
 #chain.SetBranchStatus('*', 1 )
 chain.SetBranchStatus('*', 0 )
 for s in muon_str:
@@ -102,12 +113,16 @@ for s in top_str:
     chain.SetBranchStatus(s, 1 )
 for s in csvjet_str:
     chain.SetBranchStatus(s, 1 )
+for s in top_truth_str:
+    chain.SetBranchStatus(s, 1 )
 
 npossiblejets = 4
 
 nev = chain.GetEntries()
 print nev
 
+outfilename = "output_for_response_matrix_%s.dat" % (tag)
+outfile = open(outfilename,"w+") 
 
 ################################################################################
 # Loop over the events
@@ -149,6 +164,17 @@ for n in xrange(nev):
     njets = 0
 
     top_index = -1
+
+    # Get the top truth info
+    for i in xrange(2):
+        pt = chain.GetLeaf(top_truth_str[0]).GetValue(i)
+        eta = chain.GetLeaf(top_truth_str[1]).GetValue(i)
+        phi = chain.GetLeaf(top_truth_str[2]).GetValue(i)
+        mass = chain.GetLeaf(top_truth_str[3]).GetValue(i)
+
+        #print "pt: ",pt
+        p4_top_truth[i].SetPtEtaPhiM(pt,eta,phi,mass);
+
 
     # Find the top jet!
     for i in xrange(npossiblejets):
@@ -228,6 +254,7 @@ for n in xrange(nev):
 
     # If we have found a muon, top jet and a CSV jet, then
     # let's analyze this further. 
+    found_the_event = False
     if found_csvjet and found_top and found_muon and top_criteria:
 
         #p4_top.SetPtEtaPhiM(top_ptmax,top_etamax,top_phimax,top_massmax);
@@ -236,7 +263,6 @@ for n in xrange(nev):
         dR_top_muon = p4_top.DeltaR(p4_muon);
         dR_top_csvjet = p4_top.DeltaR(p4_csvjet);
         dR_muon_csvjet = p4_muon.DeltaR(p4_csvjet);
-
 
         #if dR_top_csvjet>0.3:
         if 1:
@@ -258,9 +284,22 @@ for n in xrange(nev):
         if dR_top_muon>1.5:
             print top_ptmax,csvjet_valmax
             hcsvjet_aftercuts.Fill(top_ptmax,csvjet_valmax)
+            found_the_event = True
 
 
 
+    for i in xrange(2):
+        output = "%f " % (p4_top_truth[i].Pt())
+        if found_the_event == True:
+            dR = p4_top.DeltaR(p4_top_truth[i]);
+            if dR<0.8 and csvjet_valmax>0.8:
+                output += "%f\n" % (p4_top.Pt())
+            else:
+                output += "-1\n"
+        else:
+            output += "-1\n"
+
+    outfile.write(output)
 
 
 
@@ -279,6 +318,7 @@ for n in xrange(nev):
     #print "njets: ",njets
     #hnjets.Fill(njets)
 
+outfile.close()
 ################################################################################
 # 
 ################################################################################
