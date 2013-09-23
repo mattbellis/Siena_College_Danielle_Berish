@@ -12,14 +12,15 @@ import sys
 
 import numpy as np
 
-tag = "ttbar_MC"
-##tag = "data"
+##tag = "ttbar_MC"
+tag = "data"
 
 # ==============================================================================
 #  Read in the data.
 # ==============================================================================
 
-ROOT.gStyle.SetOptStat(111111111)
+#ROOT.gStyle.SetOptStat(111111111)
+ROOT.gStyle.SetOptStat(1)
 
 chain = ROOT.TChain("Events")
 
@@ -41,22 +42,22 @@ htoppt = TH1D("toppt","toppt", 70,100.0,800.0)
 # Assignment! 
 # Fill these hisograms
 ###############################################################################
-htop_ptmax = TH1D("htop_ptmax","Highest pt top", 80,0,800.0)
-hcsvjet_ptmax = TH1D("hcsvjet_ptmax","Highest pt CSV jet", 110,0.0,800.0)
-hmuon_ptmax = TH1D("hmuon_ptmax","Highest pt muon", 80,0.0,800.0)
+htop_ptmax = TH1D("htop_ptmax","Highest p_{T} top jet", 80,0,800.0)
+hcsvjet_ptmax = TH1D("hcsvjet_ptmax","Highest p_{T} b-jet", 110,0.0,800.0)
+hmuon_ptmax = TH1D("hmuon_ptmax","Highest p_{T} muon", 80,0.0,800.0)
 
-hcsvjet_aftercuts = TH2D("hcsvjet_aftercuts","CSV vs. pt", 7,100,800,10,0,1.0)
+hcsvjet_aftercuts = TH2D("hcsvjet_aftercuts","CSV variable vs. top p_{T}", 7,100,800,10,0,1.0)
 
 hdR = []
 for i in range(0,3):
     name = "hdR%d" % (i)
     title = ""
     if i==0:
-        title = "Top vs. muon"
+        title = "Top jet vs. muon"
     elif i==1:
-        title = "Top vs. CSV jet"
+        title = "Top jet vs. b-jet"
     elif i==2:
-        title = "Muon vs. CSV jet"
+        title = "Muon vs. b-jet"
     hdR.append(TH1D(name,title,65,0,6.5))
 
 
@@ -113,8 +114,9 @@ for s in top_str:
     chain.SetBranchStatus(s, 1 )
 for s in csvjet_str:
     chain.SetBranchStatus(s, 1 )
-for s in top_truth_str:
-    chain.SetBranchStatus(s, 1 )
+if tag != "data":
+    for s in top_truth_str:
+        chain.SetBranchStatus(s, 1 )
 
 npossiblejets = 4
 
@@ -165,15 +167,16 @@ for n in xrange(nev):
 
     top_index = -1
 
-    # Get the top truth info
-    for i in xrange(2):
-        pt = chain.GetLeaf(top_truth_str[0]).GetValue(i)
-        eta = chain.GetLeaf(top_truth_str[1]).GetValue(i)
-        phi = chain.GetLeaf(top_truth_str[2]).GetValue(i)
-        mass = chain.GetLeaf(top_truth_str[3]).GetValue(i)
+    if tag != "data":
+        # Get the top truth info
+        for i in xrange(2):
+            pt = chain.GetLeaf(top_truth_str[0]).GetValue(i)
+            eta = chain.GetLeaf(top_truth_str[1]).GetValue(i)
+            phi = chain.GetLeaf(top_truth_str[2]).GetValue(i)
+            mass = chain.GetLeaf(top_truth_str[3]).GetValue(i)
 
-        #print "pt: ",pt
-        p4_top_truth[i].SetPtEtaPhiM(pt,eta,phi,mass);
+            #print "pt: ",pt
+            p4_top_truth[i].SetPtEtaPhiM(pt,eta,phi,mass);
 
 
     # Find the top jet!
@@ -288,18 +291,19 @@ for n in xrange(nev):
 
 
 
-    for i in xrange(2):
-        output = "%f " % (p4_top_truth[i].Pt())
-        if found_the_event == True:
-            dR = p4_top.DeltaR(p4_top_truth[i]);
-            if dR<0.8 and csvjet_valmax>0.8:
-                output += "%f\n" % (p4_top.Pt())
+    if tag != "data":
+        for i in xrange(2):
+            output = "%f " % (p4_top_truth[i].Pt())
+            if found_the_event == True:
+                dR = p4_top.DeltaR(p4_top_truth[i]);
+                if dR<0.8 and csvjet_valmax>0.8:
+                    output += "%f\n" % (p4_top.Pt())
+                else:
+                    output += "-1\n"
             else:
                 output += "-1\n"
-        else:
-            output += "-1\n"
 
-    outfile.write(output)
+        outfile.write(output)
 
 
 
@@ -328,12 +332,12 @@ for i in range(0,3):
     ctop.cd(1+i)
     if i==0:
         htop_ptmax.Draw()
-        htop_ptmax.GetXaxis().SetTitle("Highest p_{T} top jet in the event")
+        htop_ptmax.GetXaxis().SetTitle("Highest p_{T} top jet")
     elif i==1:
         hcsvjet_ptmax.Draw()
-        hcsvjet_ptmax.GetXaxis().SetTitle("Highest p_{T} CSV jet in the event")
+        hcsvjet_ptmax.GetXaxis().SetTitle("Highest p_{T} b-jet opposite hemisphere top jet")
     elif i==2:
-        hmuon_ptmax.GetXaxis().SetTitle("Highest p_{T} muon in the event")
+        hmuon_ptmax.GetXaxis().SetTitle("Highest p_{T} muon")
         hmuon_ptmax.Draw()
 ctop.Update()
 name = "Plots/pt_%s.png" % (tag)
