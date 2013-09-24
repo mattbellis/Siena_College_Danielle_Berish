@@ -60,6 +60,9 @@ hcsvjet_ptmax = TH1D("hcsvjet_ptmax","Highest pt CSV jet", 110,0.0,800.0)
 
 hcsvjet_aftercuts = TH2D("hcsvjet_aftercuts","CSV vs. pt", 7,100,800,10,0,1.0)
 
+htop_aftercuts = TH1D("htop_aftercuts","Top",100,-20,200)
+hcsvjet_oppositeHemisph = TH1D("hcsvjet_oppositeHemisph","Opposite Jet",50,-200,200)
+
 hdR = []
 for i in range(0,3):
     name = "hdR%d" % (i)
@@ -153,6 +156,7 @@ for n in xrange(nev):
     
     top_nSubjetsmax = 1.0
     top_minMassmax = 1.0
+    index = 0
 
     for i in xrange(npossiblejets):
         
@@ -168,6 +172,7 @@ for n in xrange(nev):
 
         csvjet_pt = chain.GetLeaf(csvjet_str[0]).GetValue(i)
         if csvjet_pt > csvjet_ptmax:
+            index = i
             csvjet_ptmax = csvjet_pt
             csvjet_etamax = chain.GetLeaf(csvjet_str[1]).GetValue(i)
             csvjet_phimax = chain.GetLeaf(csvjet_str[2]).GetValue(i)
@@ -228,8 +233,52 @@ for n in xrange(nev):
         if abs(dR_top_muon-3.0)<1.0 and abs(dR_top_csvjet-3.0)<1.0 and abs(dR_muon_csvjet)<1.0:
             print top_ptmax,csvjet_valmax
             hcsvjet_aftercuts.Fill(top_ptmax,csvjet_valmax)
+#~~~~~~~~~~~~~~~~~~~
+        def findcsvjet_oppHem():
+            csvjet_ptmax_new = 0.0
+            for i in xrange(npossiblejets):
+                csvjet_ptmax = chain.GetLeaf(csvjet_str[0]).GetValue(index)
+                csvjet_pt = chain.GetLeaf(csvjet_str[0]).GetValue(i)
+                if csvjet_pt > csvjet_ptmax_new and csvjet_pt != csvjet_ptmax:
+                    csvjet_ptmax_new = csvjet_pt
+                    csvjet_etamax_new = chain.GetLeaf(csvjet_str[1]).GetValue(i)
+                    csvjet_phimax_new = chain.GetLeaf(csvjet_str[2]).GetValue(i)
+                    csvjet_massmax_new = chain.GetLeaf(csvjet_str[3]).GetValue(i) # For now
+                    csvjet_valmax_new = chain.GetLeaf(csvjet_str[4]).GetValue(i)
+             return csvjet_ptmax_new
+        
+        def 
+        
+        if top_massmax > 140 and top_massmax < 250 and top_minMassmax > 50 and top_nSubjetsmax >=3:
+            # found top
+            htop_aftercuts.Fill(top_massmax)
+            
+            if dR_top_csvjet > 1.0:
+                # found highest pt jet in opposite hemisphere
+                hcsvjet_oppositeHemisph.Fill(csvjet_massmax)
+            elif npossiblejets >= 2: 
+                # find highest pt jet, then check if it's in the opposite hemisphere
+                # remove the previous highest pt jet 
+                csvjet_ptmax_new = findcsvjet_oppHem()
+                
+                #if csvjet_ptmax_new > 0.0:
+                p4_csvjet.SetPtEtaPhiM(csvjet_ptmax_new,csvjet_etamax_new,csvjet_phimax_new,csvjet_massmax_new);
+                dR_top_csvjet = p4_top.DeltaR(p4_csvjet);
+                
+                    if dR_top_csvjet > 1.0:
+                    # found highest pt jet in opposite hemisphere
+                        hcsvjet_oppositeHemisph.Fill(csvjet_massmax_new)
+                    
+                    elif npossiblejets >= 3:
+                        csvjet_ptmax_new = findcsvjet_oppHem() 
+                        # this will not work because we will find the original highest pt, we need a way to remove the old jets...  
+                        if csvjet_ptmax_new > 0.0:
+                            p4_csvjet.SetPtEtaPhiM(csvjet_ptmax_new,csvjet_etamax_new,csvjet_phimax_new,csvjet_massmax_new);
+                            dR_top_csvjet = p4_top.DeltaR(p4_csvjet);
 
-
+                            if dR_top_csvjet > 1.0:
+                                # found highest pt jet in opposite hemisphere
+                                hcsvjet_oppositeHemisph.Fill(csvjet_massmax_new)
 ################################################################################
 # 
 ################################################################################
@@ -335,7 +384,17 @@ c10.cd(1)
 hmuon_phi.Draw()
 c10.Update()
 
+c11 = TCanvas('top_aftercuts', 'Top mass after cuts', 10,10,1400,800)
+c11.Divide(1,1)
+c11.cd(1)
+htop_aftercuts.Draw()
+c11.Update()
 
+c12 = TCanvas('csvjet_oppositeHemisph', 'Highest pt csv jet in opposite Hemisphere', 10,10,1400,800)
+c12.Divide(1,1)
+c12.cd(1)
+hcsvjet_oppositeHemisph.Draw()
+c12.Update()
 
 ################################################################################
 if __name__=="__main__":
