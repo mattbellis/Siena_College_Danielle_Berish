@@ -60,7 +60,7 @@ hcsvjet_ptmax = TH1D("hcsvjet_ptmax","Highest pt CSV jet", 110,0.0,800.0)
 
 hcsvjet_aftercuts = TH2D("hcsvjet_aftercuts","CSV vs. pt", 7,100,800,10,0,1.0)
 
-htop_aftercuts = TH1D("htop_aftercuts","Top",100,-20,200)
+htop_aftercuts = TH1D("htop_aftercuts","Top",100,-20,1100)
 hcsvjet_oppositeHemisph = TH1D("hcsvjet_oppositeHemisph","Opposite Jet",50,-200,200)
 
 hdR = []
@@ -134,28 +134,28 @@ for n in xrange(nev):
     #htoppt.Fill(pt_meas)
 
     #print "---------"
-    top_ptmax = 1.0
-    csvjet_ptmax = 1.0
-    muon_ptmax = 1.0
+    top_ptmax = 0.0
+    csvjet_ptmax = 0.0
+    muon_ptmax = 0.0
 
-    top_etamax = 1.0
-    csvjet_etamax = 1.0
-    muon_etamax = 1.0
+    top_etamax = 0.0
+    csvjet_etamax = 0.0
+    muon_etamax = 0.0
 
-    top_phimax = 1.0
-    csvjet_phimax = 1.0
-    muon_phimax = 1.0
+    top_phimax = 0.0
+    csvjet_phimax = 0.0
+    muon_phimax = 0.0
 
-    top_massmax = 1.0
-    csvjet_massmax = 1.0
-    muon_massmax = 1.0
+    top_massmax = 0.0
+    csvjet_massmax = 0.0
+    muon_massmax = 0.0
 
-    csvjet_valmax = 1.0
+    csvjet_valmax = 0.0
 
     njets = 0
     
-    top_nSubjetsmax = 1.0
-    top_minMassmax = 1.0
+    top_nSubjetsmax = 0.0
+    top_minMassmax = 0.0
     index = 0
 
     for i in xrange(npossiblejets):
@@ -188,21 +188,24 @@ for n in xrange(nev):
             muon_massmax = 0.105 # For now
             found_muon = True
     
-    htop_ptmax.Fill(top_ptmax)
-    htop_eta.Fill(top_etamax)
-    htop_phi.Fill(top_phimax)
-    htop_mass.Fill(top_massmax)
-    htop_nSubjets.Fill(top_nSubjetsmax)
-    htop_minMass.Fill(top_minMassmax)
+    if top_ptmax>0:
+        htop_ptmax.Fill(top_ptmax)
+        htop_eta.Fill(top_etamax)
+        htop_phi.Fill(top_phimax)
+        htop_mass.Fill(top_massmax)
+        htop_nSubjets.Fill(top_nSubjetsmax)
+        htop_minMass.Fill(top_minMassmax)
 
-    hcsvjet_ptmax.Fill(csvjet_ptmax)
-    hcsvjet_eta.Fill(csvjet_etamax)
-    hcsvjet_phi.Fill(csvjet_phimax)
+    if csvjet_ptmax>0:
+        hcsvjet_ptmax.Fill(csvjet_ptmax)
+        hcsvjet_eta.Fill(csvjet_etamax)
+        hcsvjet_phi.Fill(csvjet_phimax)
 
-     
-    hmuon_ptmax.Fill(muon_ptmax)
-    hmuon_eta.Fill(muon_etamax)
-    hmuon_phi.Fill(muon_phimax)
+         
+    if muon_ptmax>0:
+        hmuon_ptmax.Fill(muon_ptmax)
+        hmuon_eta.Fill(muon_etamax)
+        hmuon_phi.Fill(muon_phimax)
 
     # If we have found a muon, top jet and a CSV jet, then
     # let's analyze this further. 
@@ -245,13 +248,12 @@ for n in xrange(nev):
                     csvjet_phimax_new = chain.GetLeaf(csvjet_str[2]).GetValue(i)
                     csvjet_massmax_new = chain.GetLeaf(csvjet_str[3]).GetValue(i) # For now
                     csvjet_valmax_new = chain.GetLeaf(csvjet_str[4]).GetValue(i)
-             return csvjet_ptmax_new
+            return csvjet_ptmax_new,csvjet_etamax_new,csvjet_phimax_new,csvjet_massmax_new,csvjet_valmax_new
         
-        def 
         
         if top_massmax > 140 and top_massmax < 250 and top_minMassmax > 50 and top_nSubjetsmax >=3:
             # found top
-            htop_aftercuts.Fill(top_massmax)
+            htop_aftercuts.Fill(top_ptmax)
             
             if dR_top_csvjet > 1.0:
                 # found highest pt jet in opposite hemisphere
@@ -259,26 +261,26 @@ for n in xrange(nev):
             elif npossiblejets >= 2: 
                 # find highest pt jet, then check if it's in the opposite hemisphere
                 # remove the previous highest pt jet 
-                csvjet_ptmax_new = findcsvjet_oppHem()
+                csvjet_ptmax_new,csvjet_etamax_new,csvjet_phimax_new,csvjet_massmax_new,csvjet_valmax_new = findcsvjet_oppHem()
                 
                 #if csvjet_ptmax_new > 0.0:
                 p4_csvjet.SetPtEtaPhiM(csvjet_ptmax_new,csvjet_etamax_new,csvjet_phimax_new,csvjet_massmax_new);
                 dR_top_csvjet = p4_top.DeltaR(p4_csvjet);
                 
-                    if dR_top_csvjet > 1.0:
+                if dR_top_csvjet > 1.0:
                     # found highest pt jet in opposite hemisphere
-                        hcsvjet_oppositeHemisph.Fill(csvjet_massmax_new)
+                    hcsvjet_oppositeHemisph.Fill(csvjet_massmax_new)
                     
-                    elif npossiblejets >= 3:
-                        csvjet_ptmax_new = findcsvjet_oppHem() 
-                        # this will not work because we will find the original highest pt, we need a way to remove the old jets...  
-                        if csvjet_ptmax_new > 0.0:
-                            p4_csvjet.SetPtEtaPhiM(csvjet_ptmax_new,csvjet_etamax_new,csvjet_phimax_new,csvjet_massmax_new);
-                            dR_top_csvjet = p4_top.DeltaR(p4_csvjet);
+                elif npossiblejets >= 3:
+                    csvjet_ptmax_new,csvjet_etamax_new,csvjet_phimax_new,csvjet_massmax_new,csvjet_valmax_new = findcsvjet_oppHem() 
+                    # this will not work because we will find the original highest pt, we need a way to remove the old jets...  
+                    if csvjet_ptmax_new > 0.0:
+                        p4_csvjet.SetPtEtaPhiM(csvjet_ptmax_new,csvjet_etamax_new,csvjet_phimax_new,csvjet_massmax_new);
+                        dR_top_csvjet = p4_top.DeltaR(p4_csvjet);
 
-                            if dR_top_csvjet > 1.0:
-                                # found highest pt jet in opposite hemisphere
-                                hcsvjet_oppositeHemisph.Fill(csvjet_massmax_new)
+                        if dR_top_csvjet > 1.0:
+                            # found highest pt jet in opposite hemisphere
+                            hcsvjet_oppositeHemisph.Fill(csvjet_massmax_new)
 ################################################################################
 # 
 ################################################################################
