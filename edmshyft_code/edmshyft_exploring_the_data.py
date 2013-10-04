@@ -237,6 +237,7 @@ for n in xrange(nev):
             print top_ptmax,csvjet_valmax
             hcsvjet_aftercuts.Fill(top_ptmax,csvjet_valmax)
 #~~~~~~~~~~~~~~~~~~~
+        '''
         def findcsvjet_oppHem():
             csvjet_ptmax_new = 0.0
             for i in xrange(npossiblejets):
@@ -249,12 +250,37 @@ for n in xrange(nev):
                     csvjet_massmax_new = chain.GetLeaf(csvjet_str[3]).GetValue(i) # For now
                     csvjet_valmax_new = chain.GetLeaf(csvjet_str[4]).GetValue(i)
             return csvjet_ptmax_new,csvjet_etamax_new,csvjet_phimax_new,csvjet_massmax_new,csvjet_valmax_new
-        
+        '''
         
         if top_massmax > 140 and top_massmax < 250 and top_minMassmax > 50 and top_nSubjetsmax >=3:
             # found top
             htop_aftercuts.Fill(top_ptmax)
             
+            #find b-jet in opp. hemisphere
+            bjet_index = -1
+            for i in xrange(npossiblejets):
+                csvjet_pt = chain.GetLeaf(csvjet_str[0]).GetValue(i)
+                if csvjet_pt > 1.0:
+                    csvjet_etamax = chain.GetLeaf(csvjet_str[1]).GetValue(i)
+                    csvjet_phimax = chain.GetLeaf(csvjet_str[2]).GetValue(i)
+                    csvjet_massmax = chain.GetLeaf(csvjet_str[3]).GetValue(i)
+
+                    p4_csvjet.SetPtEtaPhiM(csvjet_pt,csvjet_etamax,csvjet_phimax,csvjet_massmax);
+
+                    dR = p4_top.DeltaR(p4_csvjet)
+
+                    if csvjet_pt > csvjet_ptmax and dR > 0.8:
+                        csvjet_ptmax = csvjet_pt
+                        bjet_index = i
+                        found_csvjet = True
+
+                        p4_csvjet.SetPtEtaPhiM(csvjet_pt,csvjet_etamax,csvjet_phimax,csvjet_massmax);
+                        csvjet_valmax = chain.GetLeaf(csvjet_str[4]).GetValue(i)
+
+                        dR_top_csvjet = dR
+            hcsvjet_oppositeHemisph.Fill(csvjet_ptmax)
+
+            '''
             if dR_top_csvjet > 1.0:
                 # found highest pt jet in opposite hemisphere
                 hcsvjet_oppositeHemisph.Fill(csvjet_massmax)
@@ -281,6 +307,7 @@ for n in xrange(nev):
                         if dR_top_csvjet > 1.0:
                             # found highest pt jet in opposite hemisphere
                             hcsvjet_oppositeHemisph.Fill(csvjet_massmax_new)
+              '''
 ################################################################################
 # 
 ################################################################################
