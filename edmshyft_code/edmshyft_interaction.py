@@ -12,8 +12,8 @@ import sys
 
 import numpy as np
 
-##tag = "ttbar_MC"
-tag = "data"
+tag = "ttbar_MC"
+#tag = "data"
 
 # ==============================================================================
 #  Read in the data.
@@ -203,7 +203,8 @@ for n in xrange(nev):
     bjet_index = -1
     for i in xrange(npossiblejets):
         csvjet_pt = chain.GetLeaf(csvjet_str[0]).GetValue(i)
-        if csvjet_pt > 1.0:
+        csvjet_val = chain.GetLeaf(csvjet_str[4]).GetValue(i)
+        if csvjet_pt>1.0 and csvjet_val>0.5:
             csvjet_etamax = chain.GetLeaf(csvjet_str[1]).GetValue(i)
             csvjet_phimax = chain.GetLeaf(csvjet_str[2]).GetValue(i)
             csvjet_massmax = chain.GetLeaf(csvjet_str[3]).GetValue(i) # For now
@@ -292,16 +293,28 @@ for n in xrange(nev):
 
 
     if tag != "data":
+        matched_jet_w_top = False
+        pt_top = -1
         for i in xrange(2):
+
             output = "%f " % (p4_top_truth[i].Pt())
-            if found_the_event == True:
+
+            if found_the_event == True and csvjet_valmax>0.8:
+
+                pt_top = p4_top.Pt()
                 dR = p4_top.DeltaR(p4_top_truth[i]);
-                if dR<0.8 and csvjet_valmax>0.8:
-                    output += "%f\n" % (p4_top.Pt())
+
+                if dR<0.8:
+                    output += "%f\n" % (p4_top.Pt()) # Match
+                    matched_jet_w_top = True
                 else:
-                    output += "-1\n"
+                    output += "-1\n" # Miss
             else:
-                output += "-1\n"
+                output += "-1\n" # Miss
+
+
+        if matched_jet_w_top==False and found_the_event == True and csvjet_valmax>0.8:
+            output += "-1 %f\n" % (pt_top) # Fakes
 
         outfile.write(output)
 
