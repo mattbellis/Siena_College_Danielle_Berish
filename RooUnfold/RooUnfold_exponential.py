@@ -83,7 +83,7 @@ c1.SaveAs("MC_meas.png")
 hMC_reco = unfold0.Hreco();
 hMC_reco.SetLineColor(kRed);
 hMC_reco.Draw("SAME");        # MC unfolded 
-#c1.SaveAs("MC_unfold.png")
+c1.SaveAs("MC_unfold.png")
 
 c1.Update()
 
@@ -94,7 +94,7 @@ hMC_eff = hMC_meas.Clone();
 hMC_eff.Divide(hMC_true);
 c2.SetLogy();
 hMC_eff.Draw();
-#c2.SaveAs("MC_eff.png")
+c2.SaveAs("MC_eff.png")
 
 c2.Update()
 
@@ -104,6 +104,7 @@ c5 = TCanvas('c5', 'MC_meas divided by MC_eff', 200, 10, 700, 500)
 hMC_meas_over_eff = hMC_meas.Clone()
 hMC_meas_over_eff.Divide(hMC_eff);
 hMC_meas_over_eff.Draw()
+c5.SaveAs("MC_truth_by_MC_eff.png")
 
 c5.Update()
 
@@ -137,7 +138,7 @@ hData_eff = hMeas.Clone();
 hData_eff.Divide(hTrue);
 c4.SetLogy();
 hData_eff.Draw();
-#c4.SaveAs("Data_eff.png")
+c4.SaveAs("Data_eff.png")
 
 c4.Update()
 
@@ -148,6 +149,7 @@ c6 = TCanvas('c6', 'Data measured divided by data_eff', 200, 10, 700, 500)
 hData_truth = hMeas.Clone()
 hData_truth.Divide(hData_eff);
 hData_truth.Draw()
+c6.SaveAs("Data_truth_by_eff.png")
 
 c6.Update()
 
@@ -157,6 +159,7 @@ c7 = TCanvas('c7', 'Data truth = MC meas/MC data', 200, 10, 700, 500)
 hData_truth_MC = hMC_meas.Clone()
 hData_truth_MC.Divide(hMC_true);
 hData_truth_MC.Draw()
+c7.SaveAs("Data_truth_by_MC.png")
 
 c7.Update()
 
@@ -182,7 +185,7 @@ hReco= unfold.Hreco();
 unfold.PrintTable (cout, hTrue);
 hReco.SetLineColor(kRed);
 hReco.Draw("SAME");           # Data unfolded 
-#c3.SaveAs("Data_unfold.png")
+c3.SaveAs("Data_unfold.png")
 
 c3.Update()
 
