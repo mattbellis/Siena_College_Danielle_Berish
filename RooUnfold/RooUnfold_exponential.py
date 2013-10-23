@@ -151,6 +151,16 @@ hData_truth.Draw()
 
 c6.Update()
 
+# Data truth = MC meas/MC data 
+c7 = TCanvas('c7', 'Data truth = MC meas/MC data', 200, 10, 700, 500)
+
+hData_truth_MC = hMC_meas.Clone()
+hData_truth_MC.Divide(hMC_true);
+hData_truth_MC.Draw()
+
+c7.Update()
+
+
 print "==================================== UNFOLD ==================================="
 # unfold= RooUnfoldBayes     (response, hMeas, 4);    #  OR
 unfold= RooUnfoldSvd     (response, hMeas, 20);   #  OR
