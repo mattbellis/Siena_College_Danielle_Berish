@@ -35,8 +35,8 @@ def smear(xt):
 
 print "==================================== TRAIN ===================================="
 response= RooUnfoldResponse (40, -10.0, 10.0);
-hMC_true = TH1D("MC_true","Truth Measured: Breit-Wigner", 40, -10.0, 10);
-hMC_meas = TH1D("MC_meas","Truth Efficiency: Breit-Wigner", 40, -10.0, 10);
+hMC_true = TH1D("MC_true","MC: Exponential", 40, -10.0, 10);
+hMC_meas = TH1D("MC_meas","MC: Exponential", 40, -10.0, 10);
 
 
 '''
@@ -53,7 +53,7 @@ for i in xrange(100000):
 '''
 
 # Train with an exponential 
-for i in xrange(100):
+for i in xrange(1000):
     xt = gRandom.Exp(3.33)  # paramter is tau, where exp(-t/tau)
     x = smear(xt)
     hMC_true.Fill(xt)
@@ -69,16 +69,16 @@ unfold0 = RooUnfoldSvd(response,hMC_meas, 20);
 
 
 # MC true, measured, and unfolded histograms 
-c1 = TCanvas( 'c1', 'MC', 200, 10, 700, 500 )
+c1 = TCanvas( 'c1', 'MC Unfolded', 200, 10, 700, 500 )
 
 
 hMC_true.SetLineColor(kBlack);  
 hMC_true.Draw();  # MC raw 
-#c1.SaveAs("MC_true.png")
+c1.SaveAs("MC_true.png")
 
 hMC_meas.SetLineColor(kBlue);
 hMC_meas.Draw("SAME");  # MC measured
-#c1.SaveAs("MC_meas.png")
+c1.SaveAs("MC_meas.png")
 
 hMC_reco = unfold0.Hreco();
 hMC_reco.SetLineColor(kRed);
@@ -108,12 +108,12 @@ hMC_meas_over_eff.Draw()
 c5.Update()
 
 print "==================================== TEST ====================================="
-hTrue= TH1D ("true", "Test Measured: Gaussian",    40, -10.0, 10.0);
-hMeas= TH1D ("meas", "Test Efficiency: Gaussian", 40, -10.0, 10.0);
+hTrue= TH1D ("true", "Toy Data: Exponential",    40, -10.0, 10.0);
+hMeas= TH1D ("meas", "Toy Data: Exponential", 40, -10.0, 10.0);
 
 # Test with an exponential 
 for i in xrange(1000):
-    xt = gRandom.Exp(4)
+    xt = gRandom.Exp(3.33)
     x = smear(xt)
     hTrue.Fill(xt)
     if x!= None:
@@ -158,15 +158,15 @@ unfold= RooUnfoldSvd     (response, hMeas, 20);   #  OR
 
 
 # Data true, measured and unfolded histograms 
-c3 = TCanvas( 'c3', 'Data', 200, 10, 700, 500 )
+c3 = TCanvas( 'c3', 'Data Unfolded', 200, 10, 700, 500 )
 
 hTrue.SetLineColor(kBlack);
 hTrue.Draw();     # Data raw
-#c3.SaveAs("Data_true.png")
+c3.SaveAs("Data_true.png")
 
 hMeas.SetLineColor(kBlue);
 hMeas.Draw("SAME");     # Data measured
-#c3.SaveAs("Data_meas.png")
+c3.SaveAs("Data_meas.png")
 
 hReco= unfold.Hreco();
 unfold.PrintTable (cout, hTrue);
