@@ -146,7 +146,7 @@ while tau < 9:
 
     '''
     # Data efficiency (meas/raw)
-    c4 = TCanvas( 'c4', 'Data_eff', 200, 10, 700, 500)
+    c4 = TCanvas( 'c4', 'Data_eff', 220,220, 700, 500)
 
     hData_eff = hMeas.Clone();
     hData_eff.Divide(hTrue);
@@ -158,7 +158,7 @@ while tau < 9:
 
 
     # Data measured corrected by the efficiency 
-    #c6 = TCanvas('c6', 'Data measured divided by data_eff', 200, 10, 700, 500)
+    #c6 = TCanvas('c6', 'Data measured divided by data_eff', 240,240, 700, 500)
 
     #hData_truth = hMeas.Clone()
     #hData_truth.Divide(hData_eff);
@@ -168,7 +168,7 @@ while tau < 9:
     #c6.Update()
 
     # Data truth = MC meas/MC data 
-    c7 = TCanvas('c7', 'Data truth = Data corrected by MC eff', 200, 10, 700, 500)
+    c7 = TCanvas('c7', 'Data truth = Data corrected by MC eff', 250,250, 700, 500)
 
     hData_truth_MC = hMeas.Clone()
     hData_truth_MC.SetName("Data corrected by naive MC efficiency")
@@ -187,7 +187,7 @@ while tau < 9:
 
 
     # Data true, measured and unfolded histograms 
-    c3 = TCanvas( 'c3', 'Data Unfolded', 200, 10, 700, 500 )
+    c3 = TCanvas( 'c3', 'Data Unfolded', 250,250, 700, 500 )
 
     hTrue.SetLineColor(kBlack);
     hTrue.Draw();     # Data raw
@@ -208,7 +208,7 @@ while tau < 9:
     c3.Update()
     
 
-#========================================================================================
+    #========================================================================================
     # Compare data truth, RooUnfold truth, and Naive correction truth 
     
     truth_compare = TCanvas('truth_compare','Comparison of Truth Histograms',200,10,700,500)
@@ -217,21 +217,26 @@ while tau < 9:
     hTruth_naive.SetTitle("Comparison of Toy Data Truths")
     hTruth_naive.Divide(hMC_eff);
     hTruth_naive.SetLineColor(kBlue)
+    hTruth_naive.SetLineWidth(3)
     hTruth_naive.Draw()
 
     hTrue.SetLineColor(kBlack)
+    hTrue.SetLineWidth(3)
     hTrue.Draw("SAME")
 
     hReco.SetLineColor(kRed)
+    hReco.SetLineWidth(3)
     hReco.Draw("SAME")
 
-    '''
-    legend = TLegend(1,1,1,1)
-    SetOwnership(legend,0)
-    legend.SetFillColor(1)
-    legend.AddEntry(hTruth_naive,"F")
+    #'''
+    legend = TLegend(0.4,0.7,0.98,0.90)
+    #SetOwnership(legend,0)
+    legend.SetFillColor(0)
+    legend.AddEntry(hTrue,"Truth information","l")
+    legend.AddEntry(hTruth_naive,"Naive efficiency correction","l")
+    legend.AddEntry(hReco,"Unfolded","l")
     legend.Draw()
-    '''
+    #'''
 
     truth_compare.SaveAs("Truth_Compare_Tau%s.png" % tau)
     truth_compare.Update()
