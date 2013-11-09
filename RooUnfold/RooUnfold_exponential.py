@@ -10,7 +10,7 @@
 #
 # ==============================================================================
 
-from ROOT import gRandom, TH1, TH1D, cout, TCanvas, TLegend
+from ROOT import gRandom, TH1, TH1D, cout, TCanvas, TLegend, TFile
 from ROOT import RooUnfoldResponse
 from ROOT import RooUnfold
 from ROOT import RooUnfoldBayes
@@ -42,10 +42,10 @@ def smear(xt):
 # ==============================================================================
 
 MC_tau = 2
-data_tau = 2 
+data_tau = 3 
 
 MC_tau_range = 3
-data_tau_range = 3 
+data_tau_range = 4 
 
 while MC_tau < MC_tau_range:
 
@@ -68,8 +68,8 @@ while MC_tau < MC_tau_range:
 
     print response
 
-    unfold0 = RooUnfoldBayes(response,hMC_meas,4);
-    #unfold0 = RooUnfoldSvd(response,hMC_meas, 20);  
+    #unfold0 = RooUnfoldBayes(response,hMC_meas,4);
+    unfold0 = RooUnfoldSvd(response,hMC_meas, 20);  
 
 
     # MC true, measured, and unfolded histograms 
@@ -88,7 +88,7 @@ while MC_tau < MC_tau_range:
     hMC_reco = unfold0.Hreco();
     hMC_reco.SetLineColor(kRed);
     hMC_reco.Draw("SAME");        # MC unfolded
-    c1.SaveAs("MC_unfold.png")
+    #c1.SaveAs("MC_unfold.png")
 
     legend = TLegend(0.4,0.7,0.78,0.90)
     legend.SetFillColor(0)
@@ -109,7 +109,8 @@ while MC_tau < MC_tau_range:
     c2.SetLogy();
     hMC_eff.Draw();
     c2.SaveAs("MC_eff.png")
-
+        
+ 
     '''
     c2.Update()
 
@@ -185,13 +186,15 @@ while MC_tau < MC_tau_range:
         legend.AddEntry(hData_truth_MC,"Naive efficieny correction", "l")
         legend.AddEntry(hTrue,"Truth information","l")
         legend.Draw()
+        
+        c7.SaveAs("NaiveTruthCorrection.png")
 
         c7.Update()
 
 
         print "==================================== UNFOLD ==================================="
-        unfold= RooUnfoldBayes     (response, hMeas, 4);    #  OR
-        #unfold= RooUnfoldSvd     (response, hMeas, 20);   #  OR
+        #unfold= RooUnfoldBayes     (response, hMeas, 4);    #  OR
+        unfold= RooUnfoldSvd     (response, hMeas, 20);   #  OR
         #unfold= RooUnfoldTUnfold (response, hMeas);
 
 
@@ -211,9 +214,12 @@ while MC_tau < MC_tau_range:
         hReco= unfold.Hreco();
         unfold.PrintTable (cout, hTrue);
         hReco.SetLineColor(kRed);
+        Reconstructed_data = TFile("reconstructed_truth.py","RECREATE")
+        hReco.Write()
+        Reconstructed_data.Close()
         #hReco.SetTitle("Data Truth, Measured, and Unfolded")
         hReco.Draw("SAME");           # Data unfolded 
-        c3.SaveAs("Data_unfold.png")
+        c3.SaveAs("Data_unfold_MCTau%s.png" % MC_tau)
        
         legend = TLegend(0.4,0.7,0.78,0.90)
         legend.SetFillColor(0)
@@ -221,12 +227,17 @@ while MC_tau < MC_tau_range:
         legend.AddEntry(hMeas,"Raw information","l")
         legend.AddEntry(hReco,"Unfolded","l")
         legend.Draw()
-        
+         
         c3.SaveAs("Data_unfold_Tau%s.png" % data_tau)
 
         c3.Update()
         
-
+        #################
+        reconstruct = TCanvas('reconstruct','Data reconstructed',250,250,700,500)
+        hReco.Draw()
+        reconstruct.Update()
+        
+        '''
         #========================================================================================
         # Compare data truth, RooUnfold truth, and Naive correction truth 
         
@@ -256,7 +267,8 @@ while MC_tau < MC_tau_range:
 
         truth_compare.SaveAs("TruthCompare.png")
         truth_compare.Update()
-        
+        '''
+
         data_tau += 1
     MC_tau += 1
 
