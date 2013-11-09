@@ -41,11 +41,11 @@ def smear(xt):
 #  Example Unfolding
 # ==============================================================================
 
-MC_tau = 2.0
-data_tau = 1.0 
+MC_tau = 2
+data_tau = 2 
 
-MC_tau_range = 3.0
-data_tau_range = 9.0 
+MC_tau_range = 3
+data_tau_range = 3 
 
 while MC_tau < MC_tau_range:
 
@@ -77,6 +77,7 @@ while MC_tau < MC_tau_range:
 
 
     hMC_true.SetLineColor(kBlack);  
+    hMC_true.SetTitle("MC Truth, Measured, and Unfolded")
     hMC_true.Draw();  # MC raw 
     #c1.SaveAs("MC_true.png")
 
@@ -86,10 +87,10 @@ while MC_tau < MC_tau_range:
 
     hMC_reco = unfold0.Hreco();
     hMC_reco.SetLineColor(kRed);
-    hMC_reco.Draw("SAME");        # MC unfolded 
-    #c1.SaveAs("MC_unfold.png")
+    hMC_reco.Draw("SAME");        # MC unfolded
+    c1.SaveAs("MC_unfold.png")
 
-    legend = TLegend(0.4,0.7,0.98,0.90)
+    legend = TLegend(0.4,0.7,0.78,0.90)
     legend.SetFillColor(0)
     legend.AddEntry(hMC_true,"Truth information","l")
     legend.AddEntry(hMC_meas,"Raw information","l")
@@ -99,11 +100,12 @@ while MC_tau < MC_tau_range:
     c1.Update()
 
 
-    # MC efficiency (meas/raw)
-    #c2 = TCanvas( 'c2', 'MC_eff', 200, 10, 700, 500)
+    #MC efficiency (meas/raw)
+    c2 = TCanvas( 'c2', 'MC_eff', 200, 10, 700, 500)
 
     hMC_eff = hMC_meas.Clone();
     hMC_eff.Divide(hMC_true);
+    hMC_eff.SetTitle("MC Efficiency")
     c2.SetLogy();
     hMC_eff.Draw();
     c2.SaveAs("MC_eff.png")
@@ -160,17 +162,29 @@ while MC_tau < MC_tau_range:
         #c6.SaveAs("Data_truth_by_eff.png")
         #
         #c6.Update()
+        '''
 
         # Data truth = MC meas/MC data 
         c7 = TCanvas('c7', 'Data truth = Data corrected by MC eff', 250,250, 700, 500)
-        '''
 
         hData_truth_MC = hMeas.Clone()
         hData_truth_MC.SetName("Data corrected by naive MC efficiency")
         hData_truth_MC.SetTitle("Data corrected by naive MC efficiency")
         hData_truth_MC.Divide(hMC_eff);
+        hData_truth_MC.SetLineColor(kBlue)
+        hData_truth_MC.SetLineWidth(3)
         hData_truth_MC.Draw()
         #c7.SaveAs("Data_truth_by_MC.png")
+
+        hTrue.SetLineColor(kBlack)
+        hTrue.SetLineWidth(3)
+        hTrue.Draw("SAME")
+
+        legend = TLegend(0.4,0.7,0.78,0.90)
+        legend.SetFillColor(0)
+        legend.AddEntry(hData_truth_MC,"Naive efficieny correction", "l")
+        legend.AddEntry(hTrue,"Truth information","l")
+        legend.Draw()
 
         c7.Update()
 
@@ -185,27 +199,30 @@ while MC_tau < MC_tau_range:
         c3 = TCanvas( 'c3', 'Data Unfolded', 250,250, 700, 500 )
 
         hTrue.SetLineColor(kBlack);
+        hTrue.SetTitle("Data Truth, Measured, and Unfolded")
         hTrue.Draw();     # Data raw
         #c3.SaveAs("Data_true.png")
 
         hMeas.SetLineColor(kBlue);
+        hMeas.SetLineWidth(3)
         hMeas.Draw("SAME");     # Data measured
         #c3.SaveAs("Data_meas.png")
 
         hReco= unfold.Hreco();
         unfold.PrintTable (cout, hTrue);
         hReco.SetLineColor(kRed);
+        #hReco.SetTitle("Data Truth, Measured, and Unfolded")
         hReco.Draw("SAME");           # Data unfolded 
-        #c3.SaveAs("Data_unfold.png")
+        c3.SaveAs("Data_unfold.png")
        
-        legend = TLegend(0.4,0.7,0.98,0.90)
-        legend.SetFillColor(0)
+        legend = TLegend(0.4,0.7,0.78,0.90)
+        legend.SetFillColor(1)
         legend.AddEntry(hTrue,"Truth information","l")
         legend.AddEntry(hMeas,"Raw information","l")
         legend.AddEntry(hReco,"Unfolded","l")
         legend.Draw()
         
-        c3.SaveAs("Data_unfold_Tau%s.png" % tau)
+        c3.SaveAs("Data_unfold_Tau%s.png" % data_tau)
 
         c3.Update()
         
@@ -230,17 +247,18 @@ while MC_tau < MC_tau_range:
         hReco.SetLineWidth(3)
         hReco.Draw("SAME")
 
-        legend = TLegend(0.4,0.7,0.98,0.90)
+        legend = TLegend(0.4,0.7,0.78,0.90)
         legend.SetFillColor(0)
         legend.AddEntry(hTrue,"Truth information","l")
         legend.AddEntry(hTruth_naive,"Naive efficiency correction","l")
         legend.AddEntry(hReco,"Unfolded","l")
         legend.Draw()
 
-        truth_compare.SaveAs("Truth_Compare_Tau%s.png" % tau)
+        truth_compare.SaveAs("TruthCompare.png")
         truth_compare.Update()
         
-        tau = tau*2
+        data_tau += 1
+    MC_tau += 1
 
 #================================================================================
 #print "======================================Response matrix========================="
