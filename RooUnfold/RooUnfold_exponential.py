@@ -216,7 +216,7 @@ while MC_tau < MC_tau_range:
         c3.SaveAs("Data_unfold.png")
        
         legend = TLegend(0.4,0.7,0.78,0.90)
-        legend.SetFillColor(1)
+        legend.SetFillColor(0)
         legend.AddEntry(hTrue,"Truth information","l")
         legend.AddEntry(hMeas,"Raw information","l")
         legend.AddEntry(hReco,"Unfolded","l")
