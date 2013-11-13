@@ -15,8 +15,12 @@ from ROOT import RooUnfoldResponse
 from ROOT import RooUnfold
 from ROOT import RooUnfoldBayes
 from ROOT import kRed,kBlack,kBlue
-from ROOT import RooUnfoldSvd
+#from ROOT import RooUnfoldSvd
 #from ROOT import RooUnfoldTUnfold
+
+lorange = 0
+hirange = 1500
+nbins = 15
 
 # ==============================================================================
 #  Gaussian smearing, systematic translation, and variable inefficiency
@@ -42,17 +46,17 @@ def smear(xt):
 # ==============================================================================
 
 MC_tau = 2
-data_tau = 3 
+MC_tau_range = 5
 
-MC_tau_range = 3
-data_tau_range = 4 
+
+data_unfolded_histos = []
 
 while MC_tau < MC_tau_range:
 
     print "==================================== TRAIN ===================================="
-    response= RooUnfoldResponse (40, 0.0, 1500.0);
-    hMC_true = TH1D("MC_true","MC: Exponential", 40, 0.0, 1500);
-    hMC_meas = TH1D("MC_meas","MC: Exponential", 40, 0.0, 1500);
+    response= RooUnfoldResponse (nbins,lorange,hirange)
+    hMC_true = TH1D("MC_true","MC: Exponential", nbins,lorange,hirange)
+    hMC_meas = TH1D("MC_meas","MC: Exponential", nbins,lorange,hirange)
 
 
     # Train with an exponential 
@@ -68,8 +72,8 @@ while MC_tau < MC_tau_range:
 
     print response
 
-    #unfold0 = RooUnfoldBayes(response,hMC_meas,4);
-    unfold0 = RooUnfoldSvd(response,hMC_meas, 20);  
+    unfold0 = RooUnfoldBayes(response,hMC_meas,4);
+    #unfold0 = RooUnfoldSvd(response,hMC_meas, 20);  
 
 
     # MC true, measured, and unfolded histograms 
@@ -126,11 +130,13 @@ while MC_tau < MC_tau_range:
     '''
 
 
-    #data_tau = 1
+    
+    data_tau = 2 
+    data_tau_range = 3
     while data_tau < data_tau_range:
         print "==================================== TEST ====================================="
-        hTrue= TH1D ("true", "Toy Data: Exponential", 40, 0.0, 1500.0);
-        hMeas= TH1D ("meas", "Toy Data: Exponential", 40, 0.0, 1500.0);
+        hTrue= TH1D ("true", "Toy Data: Exponential", nbins,lorange,hirange)
+        hMeas= TH1D ("meas", "Toy Data: Exponential", nbins,lorange,hirange)
 
         # Test with an exponential 
         for i in xrange(10000):
@@ -193,8 +199,8 @@ while MC_tau < MC_tau_range:
 
 
         print "==================================== UNFOLD ==================================="
-        #unfold= RooUnfoldBayes     (response, hMeas, 4);    #  OR
-        unfold= RooUnfoldSvd     (response, hMeas, 20);   #  OR
+        unfold= RooUnfoldBayes     (response, hMeas, 4);    #  OR
+        #unfold= RooUnfoldSvd     (response, hMeas, 20);   #  OR
         #unfold= RooUnfoldTUnfold (response, hMeas);
 
 
@@ -214,9 +220,11 @@ while MC_tau < MC_tau_range:
         hReco= unfold.Hreco();
         unfold.PrintTable (cout, hTrue);
         hReco.SetLineColor(kRed);
-        Reconstructed_data = TFile("reconstructed_truth.py","RECREATE")
-        hReco.Write()
-        Reconstructed_data.Close()
+
+        name = "hreco_MCtau%d_datatau%d" % (int(MC_tau),int(data_tau))
+        hReco.SetName(name)
+        data_unfolded_histos.append(hReco)
+
         #hReco.SetTitle("Data Truth, Measured, and Unfolded")
         hReco.Draw("SAME");           # Data unfolded 
         c3.SaveAs("Data_unfold_MCTau%s.png" % MC_tau)
@@ -271,6 +279,20 @@ while MC_tau < MC_tau_range:
 
         data_tau += 1
     MC_tau += 1
+
+# Print all the unfolded histos
+print "HERE IS WHERE WE ARE GOING TO PRINT THEM ALL........"
+canunfold = TCanvas("canunfold","All the unfolded histos",100,100,600,600)
+canunfold.Divide(1,1)
+colors = [2,3,4,5,6,7]
+for i,h in enumerate(data_unfolded_histos):
+    print h
+    h.SetLineColor(colors[i])
+    if i==0:
+        h.Draw()
+    else:
+        h.Draw("same")
+    canunfold.Update()
 
 #================================================================================
 #print "======================================Response matrix========================="
