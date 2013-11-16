@@ -13,14 +13,15 @@
 from ROOT import gRandom, TH1, TH1D, cout, TCanvas, TLegend, TFile
 from ROOT import RooUnfoldResponse
 from ROOT import RooUnfold
-from ROOT import RooUnfoldBayes
+#from ROOT import RooUnfoldBayes
 from ROOT import kRed,kBlack,kBlue
-#from ROOT import RooUnfoldSvd
+from ROOT import RooUnfoldSvd
 #from ROOT import RooUnfoldTUnfold
 
 lorange = 0
 hirange = 1500
 nbins = 15
+kreg = 10
 
 # ==============================================================================
 #  Gaussian smearing, systematic translation, and variable inefficiency
@@ -48,6 +49,8 @@ def smear(xt):
 MC_tau = 2
 MC_tau_range = 5
 
+data_tau = 0
+count = 0
 
 data_unfolded_histos = []
 
@@ -72,8 +75,8 @@ while MC_tau < MC_tau_range:
 
     print response
 
-    unfold0 = RooUnfoldBayes(response,hMC_meas,4);
-    #unfold0 = RooUnfoldSvd(response,hMC_meas, 20);  
+    #unfold0 = RooUnfoldBayes(response,hMC_meas,4);
+    unfold0 = RooUnfoldSvd(response,hMC_meas, kreg);  
 
 
     # MC true, measured, and unfolded histograms 
@@ -81,25 +84,28 @@ while MC_tau < MC_tau_range:
 
 
     hMC_true.SetLineColor(kBlack);  
-    hMC_true.SetTitle("MC Truth, Measured, and Unfolded")
+    hMC_true.SetTitle("MC Truth and Reconstructed, MCTau:%d ;Boosted top p_T (GeV/c)" % int(MC_tau))
+    hMC_true.SetLineWidth(3)
     hMC_true.Draw();  # MC raw 
-    #c1.SaveAs("MC_true.png")
+    #c1.SaveAs("MC_truth.png")
 
     hMC_meas.SetLineColor(kBlue);
+    hMC_meas.SetLineWidth(3)
     hMC_meas.Draw("SAME");  # MC measured
-    #c1.SaveAs("MC_meas.png")
+    #c1.SaveAs("MC_reconstructed.png")
 
-    hMC_reco = unfold0.Hreco();
-    hMC_reco.SetLineColor(kRed);
-    hMC_reco.Draw("SAME");        # MC unfolded
+    #hMC_reco = unfold0.Hreco();
+    #hMC_reco.SetLineColor(kRed);
+    #hMC_reco.Draw("SAME");        # MC unfolded
     #c1.SaveAs("MC_unfold.png")
 
     legend = TLegend(0.4,0.7,0.78,0.90)
     legend.SetFillColor(0)
-    legend.AddEntry(hMC_true,"Truth information","l")
-    legend.AddEntry(hMC_meas,"Raw information","l")
-    legend.AddEntry(hMC_reco,"Unfolded","l")
+    legend.AddEntry(hMC_true,"Truth MC","l")
+    legend.AddEntry(hMC_meas,"Reconstructed MC","l")
+    #legend.AddEntry(hMC_reco,"Unfolded MC","l")
     legend.Draw()
+    c1.SaveAs("MC_TruthAndReconstructed_MCtau%d.png" % int(MC_tau))
 
     c1.Update()
 
@@ -112,7 +118,7 @@ while MC_tau < MC_tau_range:
     hMC_eff.SetTitle("MC Efficiency")
     c2.SetLogy();
     hMC_eff.Draw();
-    c2.SaveAs("MC_eff.png")
+    c2.SaveAs("MC_eff_MCTau%d.png" % int(MC_tau))
         
  
     '''
@@ -132,7 +138,7 @@ while MC_tau < MC_tau_range:
 
     
     data_tau = 2 
-    data_tau_range = 3
+    data_tau_range = 11
     while data_tau < data_tau_range:
         print "==================================== TEST ====================================="
         hTrue= TH1D ("true", "Toy Data: Exponential", nbins,lorange,hirange)
@@ -171,15 +177,16 @@ while MC_tau < MC_tau_range:
         #c6.Update()
         '''
 
-        # Data truth = MC meas/MC data 
+        # Naively corrected data  
         c7 = TCanvas('c7', 'Data truth = Data corrected by MC eff', 250,250, 700, 500)
 
         hData_truth_MC = hMeas.Clone()
-        hData_truth_MC.SetName("Data corrected by naive MC efficiency")
-        hData_truth_MC.SetTitle("Data corrected by naive MC efficiency")
+        hData_truth_MC.SetName("Data corrected by MC efficiency (Naive Correction)")
+        hData_truth_MC.SetTitle("Data corrected by MC efficiency (Naive Correction), MCTau: %d, DataTau: %d;Boosted top p_T (GeV/c)" %(int(MC_tau),int(data_tau)))
         hData_truth_MC.Divide(hMC_eff);
         hData_truth_MC.SetLineColor(kBlue)
         hData_truth_MC.SetLineWidth(3)
+        hData_truth_MC.SetMaximum(4000)
         hData_truth_MC.Draw()
         #c7.SaveAs("Data_truth_by_MC.png")
 
@@ -190,17 +197,17 @@ while MC_tau < MC_tau_range:
         legend = TLegend(0.4,0.7,0.78,0.90)
         legend.SetFillColor(0)
         legend.AddEntry(hData_truth_MC,"Naive efficieny correction", "l")
-        legend.AddEntry(hTrue,"Truth information","l")
+        legend.AddEntry(hTrue,"Data Truth","l")
         legend.Draw()
         
-        c7.SaveAs("NaiveTruthCorrection.png")
+        c7.SaveAs("NaiveDataTruthCorrection_MCTau%d_DataTau%d.png" % (int(MC_tau),int(data_tau)))
 
         c7.Update()
 
 
         print "==================================== UNFOLD ==================================="
-        unfold= RooUnfoldBayes     (response, hMeas, 4);    #  OR
-        #unfold= RooUnfoldSvd     (response, hMeas, 20);   #  OR
+        #unfold= RooUnfoldBayes     (response, hMeas, 4);    #  OR
+        unfold= RooUnfoldSvd     (response, hMeas, kreg);   #  OR
         #unfold= RooUnfoldTUnfold (response, hMeas);
 
 
@@ -208,43 +215,48 @@ while MC_tau < MC_tau_range:
         c3 = TCanvas( 'c3', 'Data Unfolded', 250,250, 700, 500 )
 
         hTrue.SetLineColor(kBlack);
-        hTrue.SetTitle("Data Truth, Measured, and Unfolded")
-        hTrue.Draw();     # Data raw
+        hTrue.SetTitle("Data Truth, Reconstructed, and Unfolded: MCTau: %d, DataTau: %d;Boosted top p_T (GeV/c)" % (int(MC_tau),int(data_tau)))
+        hTrue.Draw();     # Data truth
         #c3.SaveAs("Data_true.png")
 
         hMeas.SetLineColor(kBlue);
         hMeas.SetLineWidth(3)
-        hMeas.Draw("SAME");     # Data measured
+        hMeas.Draw("SAME");     # Data reconstructed
         #c3.SaveAs("Data_meas.png")
 
         hReco= unfold.Hreco();
         unfold.PrintTable (cout, hTrue);
         hReco.SetLineColor(kRed);
+        hReco.SetLineWidth(3)
+        
 
-        name = "hreco_MCtau%d_datatau%d" % (int(MC_tau),int(data_tau))
-        hReco.SetName(name)
-        data_unfolded_histos.append(hReco)
+        if data_tau == 2:
+            name = "hreco_MCtau%d_datatau%d" % (int(MC_tau),int(data_tau))
+            hReco.SetName(name)
+            data_unfolded_histos.append(hReco)
 
-        #hReco.SetTitle("Data Truth, Measured, and Unfolded")
+        #hReco.SetTitle("Data Truth, Reconstructed, and Unfolded")
         hReco.Draw("SAME");           # Data unfolded 
-        c3.SaveAs("Data_unfold_MCTau%s.png" % MC_tau)
-       
+
         legend = TLegend(0.4,0.7,0.78,0.90)
         legend.SetFillColor(0)
-        legend.AddEntry(hTrue,"Truth information","l")
-        legend.AddEntry(hMeas,"Raw information","l")
-        legend.AddEntry(hReco,"Unfolded","l")
+        legend.AddEntry(hTrue,"Data Truth","l")
+        legend.AddEntry(hMeas,"Data Reconstructed","l")
+        legend.AddEntry(hReco,"Data Unfolded","l")
         legend.Draw()
          
-        c3.SaveAs("Data_unfold_Tau%s.png" % data_tau)
+        c3.SaveAs("Data_TruthReconUnfold_MCTau%d_dataTau%d.png" % (int(MC_tau),int(data_tau)))
 
         c3.Update()
         
         #################
+        '''
         reconstruct = TCanvas('reconstruct','Data reconstructed',250,250,700,500)
+        print "Number unfolded: ", hReco.GetEntries()
+        print hReco.GetEffectiveEntries()
         hReco.Draw()
         reconstruct.Update()
-        
+        '''
         '''
         #========================================================================================
         # Compare data truth, RooUnfold truth, and Naive correction truth 
@@ -277,22 +289,34 @@ while MC_tau < MC_tau_range:
         truth_compare.Update()
         '''
 
-        data_tau += 1
+        data_tau += 2
     MC_tau += 1
+    count += 1
 
 # Print all the unfolded histos
 print "HERE IS WHERE WE ARE GOING TO PRINT THEM ALL........"
-canunfold = TCanvas("canunfold","All the unfolded histos",100,100,600,600)
+canunfold = TCanvas("canunfold","All the unfolded histos",200,10,700,500)
 canunfold.Divide(1,1)
-colors = [2,3,4,5,6,7]
+colors = [2,3,4,5,6,7,8,9]
+legend = TLegend(0.48,0.70,0.78,0.90)
+legend.SetFillColor(0)
+MC_tau = MC_tau - count 
+data_tau = 2
 for i,h in enumerate(data_unfolded_histos):
     print h
     h.SetLineColor(colors[i])
     if i==0:
+        h.SetTitle("Data Unfolded, DataTau: %d ;Boosted top p_T (GeV/c)" % int(data_tau))
         h.Draw()
+        legend.AddEntry(h,"Data Unfolded, MC_tau: "+str(MC_tau),"l")
     else:
         h.Draw("same")
+        legend.AddEntry(h,"Data Unfolded, MC_tau: " + str(MC_tau + i),"l")
+    legend.Draw()
+    h.SetMinimum(-10)
+    h.SetMaximum(500)
     canunfold.Update()
+canunfold.SaveAs("ComparisonUnfoldedData_DiffMC.png")
 
 #================================================================================
 #print "======================================Response matrix========================="
