@@ -37,6 +37,10 @@ hmuon_ptmax = TH1D("hmuon_ptmax","Highest p_{T} muon", 80,0.0,800.0)
 
 hcsvjet_aftercuts = TH2D("hcsvjet_aftercuts","CSV variable vs. top p_{T}", 7,100,800,10,0,1.0)
 
+htop_pt = TH1D("htop_pt","pT Distribution of the top",80,0,800.0)
+hantiTop_pt = TH1D("hantiTop_pt","pT Distribution of the anti-top",80,0,800.0)
+
+
 # Top Truth
 truth_str = []
 truth_str.append("floats_pfShyftTupleGenParticles_pdgId_ANA.obj")
@@ -58,18 +62,33 @@ print nev
 # Loop over the events
 ################################################################################
 for n in xrange(nev):
-    if n%10000==0:
+    if n%1000==0:
         print "%d of %d" % (n,nev)
 
     chain.GetEntry(n)
 
-    print '---------------------'
+    #print '---------------------'
     for i in xrange(32):
         pdg = chain.GetLeaf(truth_str[0]).GetValue(i)
         #status = chain.GetLeaf(truth_str[1]).GetValue(i)
         pt = chain.GetLeaf(truth_str[2]).GetValue(i)
-        print pdg,pt
 
+        if pdg == 6:
+            htop_pt.Fill(pt)
+        elif pdg == -6:
+            hantiTop_pt.Fill(pt)
+        #print pdg,pt
+
+################################################################################
+# Histograms of the pT distribution of the truth top and antitop 
+################################################################################
+ctop = TCanvas('ctop','Top pt', 10, 10, 1400, 600)
+htop_pt.Draw()
+ctop.Update()
+
+cantitop = TCanvas('cantitop', 'AntiTop pt', 10, 10, 1400, 600)
+hantiTop_pt.Draw()
+cantitop.Update()
 
 ################################################################################
 if __name__=="__main__":
