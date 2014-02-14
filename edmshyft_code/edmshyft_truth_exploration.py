@@ -15,6 +15,23 @@ import numpy as np
 tag = "ttbar_MC_truth"
 #tag = "data"
 
+###############################################################################
+# Function that takes in four pdg numbers and classifies them
+def classify(pdg0,pdg1,pdg2,pdg3):
+    classification = []  # 0 = hadron, 1 = lepton
+    if pdg0 <= 6 and pdg0 >= -6:  # hadronic 
+        classification.append(0)
+    elif pdg0 <= 18 and pdg0 >= 11 or pdg0 >= -18 and pdg0 <= -11:  #lepton
+        classification.append(1)
+
+    if pdg2 <=6 and pdg2 >= -6:
+        classification.append(0)
+    elif pdg2 <= 18 and pdg2 >= 11 or pdg2 >= -18 and pdg0 <= -11:
+        classification.append(1)
+
+    return classification 
+
+
 # ==============================================================================
 #  Read in the data.
 # ==============================================================================
@@ -39,6 +56,9 @@ hcsvjet_aftercuts = TH2D("hcsvjet_aftercuts","CSV variable vs. top p_{T}", 7,100
 
 htop_pt = TH1D("htop_pt","pT Distribution of the top",80,0,800.0)
 hantiTop_pt = TH1D("hantiTop_pt","pT Distribution of the anti-top",80,0,800.0)
+
+htop_semilepton = TH1D("htop_semilepton","Tops that decay semi-leptonically", 80,0,800)
+htop_hadron = TH1D("htop_hadron","Tops that decay hadronically", 80,0,800)
 
 
 # Top Truth
@@ -66,8 +86,13 @@ for n in xrange(nev):
         print "%d of %d" % (n,nev)
 
     chain.GetEntry(n)
+    flag = 0
+    flag_1 = 0
+    decay_count = 0
+    decay = []
+    top_antitop_pt = []
 
-    #print '---------------------'
+    print '---------------------'
     for i in xrange(32):
         pdg = chain.GetLeaf(truth_str[0]).GetValue(i)
         #status = chain.GetLeaf(truth_str[1]).GetValue(i)
@@ -75,18 +100,42 @@ for n in xrange(nev):
 
         if pdg == 6:
             htop_pt.Fill(pt)
+            top_antitop_pt.append(pt)
         elif pdg == -6:
             hantiTop_pt.Fill(pt)
-        #print pdg,pt
+            top_antitop_pt.append(pt)
+        
+        # look for W+,b,W-,b
+        if pdg==24 or pdg ==-24 or pdg==5 or pdg ==-5:
+            flag += 1
+            flag_1 = 0
+        else:
+            flag_1 = 1
+        
+        # when flag is 4, put next four entries into list 
+        if flag == 4 and flag_1 == 1 and decay_count < 4:
+            decay.append(pdg)
+            decay_count += 1
+    
+        print pdg,pt
+    print decay
+    thing = classify(decay[0],decay[1],decay[2],decay[3])
+    print thing  
 
 ################################################################################
 # Histograms of the pT distribution of the truth top and antitop 
 ################################################################################
 ctop = TCanvas('ctop','Top pt', 10, 10, 1400, 600)
+print "===================================="
+print "Top exponential"
+htop_pt.Fit("expo","","",115,650)
 htop_pt.Draw()
 ctop.Update()
 
 cantitop = TCanvas('cantitop', 'AntiTop pt', 10, 10, 1400, 600)
+print "====================================="
+print "Antitop exponential"
+hantiTop_pt.Fit("expo","","",130,650)
 hantiTop_pt.Draw()
 cantitop.Update()
 
