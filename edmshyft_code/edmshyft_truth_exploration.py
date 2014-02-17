@@ -57,7 +57,7 @@ hcsvjet_aftercuts = TH2D("hcsvjet_aftercuts","CSV variable vs. top p_{T}", 7,100
 htop_pt = TH1D("htop_pt","pT Distribution of the top",80,0,800.0)
 hantiTop_pt = TH1D("hantiTop_pt","pT Distribution of the anti-top",80,0,800.0)
 
-htop_semilepton = TH1D("htop_semilepton","Tops that decay semi-leptonically", 80,0,800)
+htop_lepton = TH1D("htop_semilepton","Tops that decay semi-leptonically", 80,0,800)
 htop_hadron = TH1D("htop_hadron","Tops that decay hadronically", 80,0,800)
 
 
@@ -78,6 +78,10 @@ for s in truth_str:
 nev = chain.GetEntries()
 print nev
 
+hadron_count = 0
+lepton_count = 0
+semi_lepton_count = 0
+
 ################################################################################
 # Loop over the events
 ################################################################################
@@ -86,13 +90,14 @@ for n in xrange(nev):
         print "%d of %d" % (n,nev)
 
     chain.GetEntry(n)
+    flag_tops = 0
+    flag_Ws_bs = 0
     flag = 0
-    flag_1 = 0
     decay_count = 0
     decay = []
     top_antitop_pt = []
 
-    print '---------------------'
+    #print '---------------------'
     for i in xrange(32):
         pdg = chain.GetLeaf(truth_str[0]).GetValue(i)
         #status = chain.GetLeaf(truth_str[1]).GetValue(i)
@@ -101,27 +106,49 @@ for n in xrange(nev):
         if pdg == 6:
             htop_pt.Fill(pt)
             top_antitop_pt.append(pt)
+            flag_tops += 1
         elif pdg == -6:
             hantiTop_pt.Fill(pt)
             top_antitop_pt.append(pt)
+            flag_tops += 1
         
         # look for W+,b,W-,b
-        if pdg==24 or pdg ==-24 or pdg==5 or pdg ==-5:
-            flag += 1
-            flag_1 = 0
-        else:
-            flag_1 = 1
+        if flag_tops >= 2:
+            if pdg==24 or pdg ==-24 or pdg==5 or pdg ==-5:
+                flag_Ws_bs += 1
+                flag = 0
+            else:
+                flag = 1
         
         # when flag is 4, put next four entries into list 
-        if flag == 4 and flag_1 == 1 and decay_count < 4:
+        if flag == 1 and decay_count < 4 and flag_Ws_bs == 4:
             decay.append(pdg)
             decay_count += 1
     
-        print pdg,pt
-    print decay
-    thing = classify(decay[0],decay[1],decay[2],decay[3])
-    print thing  
+        #print pdg,pt
+    #print decay
+    if len(decay) > 0:
+        classif = classify(decay[0],decay[1],decay[2],decay[3])
+        
+        #count how many tops decay hadronically vs. leptonically
+        if classif[0] == 0 or classif[1] == 0:
+            hadron_count += 1
+        elif classif[0] == 1 or classif[1] == 1:
+            lepton_count += 1
 
+        #plot semi-leptonically decaying events
+        if classif == [0,1]:
+            htop_lepton.Fill(top_antitop_pt[1])
+            htop_hadron.Fill(top_antitop_pt[0])
+            semi_lepton_count += 1
+        elif classif == [1,0]:
+            htop_lepton.Fill(top_antitop_pt[1])
+            htop_hadron.Fill(top_antitop_pt[0])
+            semi_lepton_count += 1
+
+print "Hadronically: ", hadron_count
+print "Leptonically: ", lepton_count
+print "Semi_leptonically: ", semi_lepton_count
 ################################################################################
 # Histograms of the pT distribution of the truth top and antitop 
 ################################################################################
@@ -139,6 +166,13 @@ hantiTop_pt.Fit("expo","","",130,650)
 hantiTop_pt.Draw()
 cantitop.Update()
 
+ctoplep = TCanvas('ctoplep', 'Tops that Decay Leptonically', 10, 10, 1400, 600)
+htop_lepton.Draw()
+ctoplep.Update()
+
+ctophad = TCanvas('ctophad', 'Tops that Decay Hadronically', 10, 10, 1400, 600)
+htop_hadron.Draw()
+ctophad.Update()
 ################################################################################
 if __name__=="__main__":
     rep = ''
