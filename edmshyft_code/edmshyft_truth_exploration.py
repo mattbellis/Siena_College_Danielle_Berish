@@ -52,6 +52,8 @@ htop_ptmax = TH1D("htop_ptmax","Highest p_{T} top jet", 80,0,800.0)
 hcsvjet_ptmax = TH1D("hcsvjet_ptmax","Highest p_{T} b-jet", 110,0.0,800.0)
 hmuon_ptmax = TH1D("hmuon_ptmax","Highest p_{T} muon", 80,0.0,800.0)
 
+htop_jet = TH1D("htop_jet","p_{T} top jet", 80,0,800.0)
+
 hcsvjet_aftercuts = TH2D("hcsvjet_aftercuts","CSV variable vs. top p_{T}", 7,100,800,10,0,1.0)
 
 htop_pt = TH1D("htop_pt","pT Distribution of the top",80,0,800.0)
@@ -67,11 +69,22 @@ truth_str.append("floats_pfShyftTupleGenParticles_pdgId_ANA.obj")
 truth_str.append("floats_pfShyftTupleGenParticles_status_ANA.obj")
 truth_str.append("floats_pfShyftTupleGenParticles_pt_ANA.obj")
 
+# Top reconstructed from the top tagging info.
+top_str = []
+top_str.append("floats_pfShyftTupleJetsLooseTopTag_pt_ANA.obj")
+top_str.append("floats_pfShyftTupleJetsLooseTopTag_eta_ANA.obj")
+top_str.append("floats_pfShyftTupleJetsLooseTopTag_phi_ANA.obj")
+top_str.append("floats_pfShyftTupleJetsLooseTopTag_mass_ANA.obj")
+top_str.append("floats_pfShyftTupleJetsLooseTopTag_nSubjets_ANA.obj")
+top_str.append("floats_pfShyftTupleJetsLooseTopTag_minMass_ANA.obj")
+
 p4 = TLorentzVector()
 
 #chain.SetBranchStatus('*', 1 )
 chain.SetBranchStatus('*', 0 )
 for s in truth_str:
+    chain.SetBranchStatus(s, 1 )
+for s in top_str:
     chain.SetBranchStatus(s, 1 )
 
 
@@ -103,6 +116,7 @@ for n in xrange(nev):
         pdg = chain.GetLeaf(truth_str[0]).GetValue(i)
         #status = chain.GetLeaf(truth_str[1]).GetValue(i)
         pt = chain.GetLeaf(truth_str[2]).GetValue(i)
+
 
         if pdg == 6:
             htop_pt.Fill(pt)
@@ -149,6 +163,16 @@ for n in xrange(nev):
         else:
             not_semi_lepton_count += 1
 
+    top_pt = 0
+    for i in xrange(2):
+        top_pt = chain.GetLeaf(top_str[0]).GetValue(i)
+
+        if top_pt>0:
+            htop_jet.Fill(top_pt)
+
+
+
+
 print "Hadronically: ", hadron_count
 print "Leptonically: ", lepton_count
 print "Semi_leptonically: ", semi_lepton_count
@@ -177,6 +201,11 @@ ctoplep.Update()
 ctophad = TCanvas('ctophad', 'Tops that Decay Hadronically', 10, 10, 1400, 600)
 htop_hadron.Draw()
 ctophad.Update()
+
+ctopjet = TCanvas('ctopjet', 'Tops jets', 10, 10, 1400, 600)
+htop_jet.Draw()
+ctopjet.Update()
+
 ################################################################################
 if __name__=="__main__":
     rep = ''
