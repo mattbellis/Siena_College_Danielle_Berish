@@ -21,12 +21,12 @@ def classify(pdg0,pdg1,pdg2,pdg3):
     classification = []  # 0 = hadron, 1 = lepton
     if pdg0 <= 6 and pdg0 >= -6:  # hadronic 
         classification.append(0)
-    elif pdg0 <= 18 and pdg0 >= 11 or pdg0 >= -18 and pdg0 <= -11:  #lepton
+    elif (pdg0 <= 18 and pdg0) >= 11 or (pdg0 >= -18 and pdg0 <= -11):  #lepton
         classification.append(1)
 
     if pdg2 <=6 and pdg2 >= -6:
         classification.append(0)
-    elif pdg2 <= 18 and pdg2 >= 11 or pdg2 >= -18 and pdg0 <= -11:
+    elif (pdg2 <= 18 and pdg2) >= 11 or (pdg2 >= -18 and pdg0 <= -11):
         classification.append(1)
 
     return classification 
@@ -81,6 +81,7 @@ print nev
 hadron_count = 0
 lepton_count = 0
 semi_lepton_count = 0
+not_semi_lepton_count = 0
 
 ################################################################################
 # Loop over the events
@@ -145,10 +146,13 @@ for n in xrange(nev):
             htop_lepton.Fill(top_antitop_pt[1])
             htop_hadron.Fill(top_antitop_pt[0])
             semi_lepton_count += 1
+        else:
+            not_semi_lepton_count += 1
 
 print "Hadronically: ", hadron_count
 print "Leptonically: ", lepton_count
 print "Semi_leptonically: ", semi_lepton_count
+print "Not Semi_leptonically: ", not_semi_lepton_count
 ################################################################################
 # Histograms of the pT distribution of the truth top and antitop 
 ################################################################################
