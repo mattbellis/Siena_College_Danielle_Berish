@@ -62,6 +62,7 @@ hantiTop_pt = TH1D("hantiTop_pt","pT Distribution of the anti-top",80,0,800.0)
 htop_lepton = TH1D("htop_semilepton","Tops that decay semi-leptonically", 80,0,800)
 htop_hadron = TH1D("htop_hadron","Tops that decay hadronically", 80,0,800)
 
+hHadrTop = TH1D("HadrTop","pT Distribution of the hadronically decaying top",80,0,800)
 
 # Top Truth
 truth_str = []
@@ -96,6 +97,8 @@ lepton_count = 0
 semi_lepton_count = 0
 not_semi_lepton_count = 0
 
+pT_low = 550
+pT_high = 650
 ################################################################################
 # Loop over the events
 ################################################################################
@@ -142,13 +145,18 @@ for n in xrange(nev):
     
         #print pdg,pt
     #print decay
+    classif = []
     if len(decay) > 0:
         classif = classify(decay[0],decay[1],decay[2],decay[3])
         
-        #count how many tops decay hadronically vs. leptonically
-        if classif[0] == 0 or classif[1] == 0:
+        #count how many Ws decay hadronically vs. leptonically
+        if classif[0] == 0:
             hadron_count += 1
-        elif classif[0] == 1 or classif[1] == 1:
+        elif classif[1] == 0:
+            hadron_count += 1
+        elif classif[0] == 1:
+            lepton_count += 1
+        elif classif[1] == 1:
             lepton_count += 1
 
         #plot semi-leptonically decaying events
@@ -157,26 +165,35 @@ for n in xrange(nev):
             htop_hadron.Fill(top_antitop_pt[0])
             semi_lepton_count += 1
         elif classif == [1,0]:
-            htop_lepton.Fill(top_antitop_pt[1])
-            htop_hadron.Fill(top_antitop_pt[0])
+            htop_lepton.Fill(top_antitop_pt[0])
+            htop_hadron.Fill(top_antitop_pt[1])
             semi_lepton_count += 1
         else:
             not_semi_lepton_count += 1
 
     top_pt = 0
-    for i in xrange(2):
-        top_pt = chain.GetLeaf(top_str[0]).GetValue(i)
+    if classif == [0,1] and top_antitop_pt[0] < pT_high and top_antitop_pt[0] > pT_low:
+        hHadrTop.Fill(top_antitop_pt[0])
+        for i in xrange(2):
+            top_pt = chain.GetLeaf(top_str[0]).GetValue(i)
 
-        if top_pt>0:
-            htop_jet.Fill(top_pt)
+            if top_pt>0:
+                htop_jet.Fill(top_pt)
+    elif classif == [1,0] and top_antitop_pt[1] < pT_high and top_antitop_pt[1] > pT_low:
+        hHadrTop.Fill(top_antitop_pt[1])
+        for i in xrange(2):
+            top_pt = chain.GetLeaf(top_str[0]).GetValue(i)
+
+            if top_pt > 0:
+                htop_jet.Fill(top_pt)
 
 
 
 
-print "Hadronically: ", hadron_count
-print "Leptonically: ", lepton_count
-print "Semi_leptonically: ", semi_lepton_count
-print "Not Semi_leptonically: ", not_semi_lepton_count
+print "Hadronically decaying W: ", hadron_count    # W bosons that decay hadronically
+print "Leptonically decaying W: ", lepton_count    # W bosons that decay leptonically
+print "Semi_leptonically decaying ttbar events: ", semi_lepton_count  # Events in which one W decays hadronically and one W decays leptonically
+print "Not Semi_leptonically decaying ttbar events: ", not_semi_lepton_count
 ################################################################################
 # Histograms of the pT distribution of the truth top and antitop 
 ################################################################################
@@ -202,10 +219,23 @@ ctophad = TCanvas('ctophad', 'Tops that Decay Hadronically', 10, 10, 1400, 600)
 htop_hadron.Draw()
 ctophad.Update()
 
+creco = TCanvas('creco', 'Hadronically decayed tops',10,10,1400,600)
+creco.Divide(2,1,0.02,0.02)
+creco.cd(1)
+hHadrTop.Draw()
+creco.cd(2)
+htop_jet.Draw()
+creco.Update()
+
+'''
 ctopjet = TCanvas('ctopjet', 'Tops jets', 10, 10, 1400, 600)
 htop_jet.Draw()
 ctopjet.Update()
 
+cHadrTop = TCanvas('cHadrTop', 'Hadronic Tops in Semi-Lep. Events', 10, 10, 1400, 600)
+hHadrTop.Draw()
+cHadrTop.Update()
+'''
 ################################################################################
 if __name__=="__main__":
     rep = ''
