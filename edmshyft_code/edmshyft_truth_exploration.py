@@ -15,6 +15,26 @@ import numpy as np
 tag = "ttbar_MC_truth"
 #tag = "data"
 
+################################################################################
+# Try to see if two particles have roughly the same angular component of their
+# momentum. 
+################################################################################
+def truth_matching(p0, p1, max_dR=0.8):
+
+    # p[0] = pT
+    # p[1] = eta
+    # p[2] = phi
+
+    # dR = sqrt((delta eta)**2 + (delta phi**2))
+    dR = np.sqrt((p0[1]-p1[1])**2 + (p0[2]-p1[2])**2)
+
+    if dR<max_dR:
+        return True
+    else:
+        return False
+
+
+
 ###############################################################################
 # Function that takes in four pdg numbers and classifies them
 def classify(pdg0,pdg1,pdg2,pdg3):
@@ -69,6 +89,8 @@ truth_str = []
 truth_str.append("floats_pfShyftTupleGenParticles_pdgId_ANA.obj")
 truth_str.append("floats_pfShyftTupleGenParticles_status_ANA.obj")
 truth_str.append("floats_pfShyftTupleGenParticles_pt_ANA.obj")
+truth_str.append("floats_pfShyftTupleGenParticles_eta_ANA.obj")
+truth_str.append("floats_pfShyftTupleGenParticles_phi_ANA.obj")
 
 # Top reconstructed from the top tagging info.
 top_str = []
@@ -113,21 +135,29 @@ for n in xrange(nev):
     decay_count = 0
     decay = []
     top_antitop_pt = []
+    top_antitop_eta = []
+    top_antitop_phi = []
 
     #print '---------------------'
     for i in xrange(32):
         pdg = chain.GetLeaf(truth_str[0]).GetValue(i)
         #status = chain.GetLeaf(truth_str[1]).GetValue(i)
         pt = chain.GetLeaf(truth_str[2]).GetValue(i)
+        eta = chain.GetLeaf(truth_str[3]).GetValue(i)
+        phi = chain.GetLeaf(truth_str[4]).GetValue(i)
 
 
         if pdg == 6:
             htop_pt.Fill(pt)
             top_antitop_pt.append(pt)
+            top_antitop_eta.append(eta)
+            top_antitop_phi.append(phi)
             flag_tops += 1
         elif pdg == -6:
             hantiTop_pt.Fill(pt)
             top_antitop_pt.append(pt)
+            top_antitop_eta.append(eta)
+            top_antitop_phi.append(phi)
             flag_tops += 1
         
         # look for W+,b,W-,b
@@ -176,15 +206,24 @@ for n in xrange(nev):
         hHadrTop.Fill(top_antitop_pt[0])
         for i in xrange(2):
             top_pt = chain.GetLeaf(top_str[0]).GetValue(i)
+            top_eta = chain.GetLeaf(top_str[1]).GetValue(i)
+            top_phi = chain.GetLeaf(top_str[2]).GetValue(i)
 
-            if top_pt>0:
+            is_truth_matched = truth_matching([top_antitop_pt[0],top_antitop_eta[0],top_antitop_phi[0]],[top_pt,top_eta,top_phi])
+
+            if top_pt>0 and is_truth_matched:
                 htop_jet.Fill(top_pt)
+
     elif classif == [1,0] and top_antitop_pt[1] < pT_high and top_antitop_pt[1] > pT_low:
         hHadrTop.Fill(top_antitop_pt[1])
         for i in xrange(2):
             top_pt = chain.GetLeaf(top_str[0]).GetValue(i)
+            top_eta = chain.GetLeaf(top_str[1]).GetValue(i)
+            top_phi = chain.GetLeaf(top_str[2]).GetValue(i)
 
-            if top_pt > 0:
+            is_truth_matched = truth_matching([top_antitop_pt[1],top_antitop_eta[1],top_antitop_phi[1]],[top_pt,top_eta,top_phi])
+
+            if top_pt > 0 and is_truth_matched:
                 htop_jet.Fill(top_pt)
 
 
