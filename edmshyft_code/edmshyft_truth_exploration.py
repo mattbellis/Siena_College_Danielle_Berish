@@ -84,6 +84,33 @@ htop_hadron = TH1D("htop_hadron","Tops that decay hadronically", 80,0,800)
 
 hHadrTop = TH1D("HadrTop","pT Distribution of the hadronically decaying top",80,0,800)
 
+top_histos = []
+jet_histos = []
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+htop_100 = TH1D("htop_100","pT Distribution of the hadronically decaying top",80,0,800)
+htop_200 = TH1D("htop_200","pT Distribution of the hadronically decaying top",80,0,800)
+htop_300 = TH1D("htop_300","pT Distribution of the hadronically decaying top",80,0,800)
+htop_400 = TH1D("htop_400","pT Distribution of the hadronically decaying top",80,0,800)
+htop_500 = TH1D("htop_500","pT Distribution of the hadronically decaying top",80,0,800)
+htop_600 = TH1D("htop_600","pT Distribution of the hadronically decaying top",80,0,800)
+htop_700 = TH1D("htop_700","pT Distribution of the hadronically decaying top",80,0,800)
+htop_800 = TH1D("htop_800","pT Distribution of the hadronically decaying top",80,0,800)
+
+
+hjet_100 = TH1D("hjet_100","pT Distribution of the top jet",80,0,800)
+hjet_200 = TH1D("hjet_200","pT Distribution of the top jet",80,0,800)
+hjet_300 = TH1D("hjet_300","pT Distribution of the top jet",80,0,800)
+hjet_400 = TH1D("hjet_400","pT Distribution of the top jet",80,0,800)
+hjet_500 = TH1D("hjet_500","pT Distribution of the top jet",80,0,800)
+hjet_600 = TH1D("hjet_600","pT Distribution of the top jet",80,0,800)
+hjet_700 = TH1D("hjet_700","pT Distribution of the top jet",80,0,800)
+hjet_800 = TH1D("hjet_800","pT Distribution of the top jet",80,0,800)
+
+top_all = [htop_100,htop_200,htop_300,htop_400,htop_500,htop_600,htop_700,htop_800]
+jet_all = [hjet_100,hjet_200,hjet_300,hjet_400,hjet_500,hjet_600,hjet_700,hjet_800]
+
+###################################################################################
 # Top Truth
 truth_str = []
 truth_str.append("floats_pfShyftTupleGenParticles_pdgId_ANA.obj")
@@ -119,8 +146,8 @@ lepton_count = 0
 semi_lepton_count = 0
 not_semi_lepton_count = 0
 
-pT_low = 550
-pT_high = 650
+#pT_low = 550
+#pT_high = 650
 ################################################################################
 # Loop over the events
 ################################################################################
@@ -201,31 +228,51 @@ for n in xrange(nev):
         else:
             not_semi_lepton_count += 1
 
-    top_pt = 0
-    if classif == [0,1] and top_antitop_pt[0] < pT_high and top_antitop_pt[0] > pT_low:
-        hHadrTop.Fill(top_antitop_pt[0])
-        for i in xrange(2):
-            top_pt = chain.GetLeaf(top_str[0]).GetValue(i)
-            top_eta = chain.GetLeaf(top_str[1]).GetValue(i)
-            top_phi = chain.GetLeaf(top_str[2]).GetValue(i)
+    
+    pT_low = 0
+    pT_high = 100
+    histo = 0
 
-            is_truth_matched = truth_matching([top_antitop_pt[0],top_antitop_eta[0],top_antitop_phi[0]],[top_pt,top_eta,top_phi])
+    while pT_high < 900:
+        
+        top_pt = 0
+        if classif == [0,1] and top_antitop_pt[0] < pT_high and top_antitop_pt[0] > pT_low:
+            hHadrTop.Fill(top_antitop_pt[0])
+            #top_histos.append(hHadrTop)
+            top_all[histo].Fill(top_antitop_pt[0])
+            for i in xrange(2):
+                top_pt = chain.GetLeaf(top_str[0]).GetValue(i)
+                top_eta = chain.GetLeaf(top_str[1]).GetValue(i)
+                top_phi = chain.GetLeaf(top_str[2]).GetValue(i)
 
-            if top_pt>0 and is_truth_matched:
-                htop_jet.Fill(top_pt)
+                is_truth_matched = truth_matching([top_antitop_pt[0],top_antitop_eta[0],top_antitop_phi[0]],[top_pt,top_eta,top_phi])
 
-    elif classif == [1,0] and top_antitop_pt[1] < pT_high and top_antitop_pt[1] > pT_low:
-        hHadrTop.Fill(top_antitop_pt[1])
-        for i in xrange(2):
-            top_pt = chain.GetLeaf(top_str[0]).GetValue(i)
-            top_eta = chain.GetLeaf(top_str[1]).GetValue(i)
-            top_phi = chain.GetLeaf(top_str[2]).GetValue(i)
+                if top_pt>0 and is_truth_matched:
+                    htop_jet.Fill(top_pt)
+                    #jet_histos.append(htop_jet)
 
-            is_truth_matched = truth_matching([top_antitop_pt[1],top_antitop_eta[1],top_antitop_phi[1]],[top_pt,top_eta,top_phi])
+                    jet_all[histo].Fill(top_pt)
 
-            if top_pt > 0 and is_truth_matched:
-                htop_jet.Fill(top_pt)
+        elif classif == [1,0] and top_antitop_pt[1] < pT_high and top_antitop_pt[1] > pT_low:
+            hHadrTop.Fill(top_antitop_pt[1])
+            #top_histos.append(hHadrTop)
+            top_all[histo].Fill(top_antitop_pt[1])
+            for i in xrange(2):
+                top_pt = chain.GetLeaf(top_str[0]).GetValue(i)
+                top_eta = chain.GetLeaf(top_str[1]).GetValue(i)
+                top_phi = chain.GetLeaf(top_str[2]).GetValue(i)
 
+                is_truth_matched = truth_matching([top_antitop_pt[1],top_antitop_eta[1],top_antitop_phi[1]],[top_pt,top_eta,top_phi])
+
+                if top_pt > 0 and is_truth_matched:
+                    htop_jet.Fill(top_pt)
+                    #jet_histos.append(htop_jet)
+                    
+                    jet_all[histo].Fill(top_pt)
+
+        pT_high += 100
+        pT_low += 100
+        histo += 1
 
 
 
@@ -266,6 +313,38 @@ creco.cd(2)
 htop_jet.Draw()
 creco.Update()
 
+##########
+cTopsJets400 = TCanvas('cTopsJets400','Hadronically Decayed Tops and Reco Jets',10,10,1400,600)
+cTopsJets400.Divide(2,4,0.02,0.02)
+
+i = 0
+space = 1
+
+while i <= 3:
+    cTopsJets400.cd(space)
+    top_all[i].Draw()
+    cTopsJets400.cd(space+1)
+    jet_all[i].Draw()
+    
+    i += 1
+    space += 2
+cTopsJets400.Update()
+
+cTopsJets800 = TCanvas('cTopsJets800','Hadronically Decayed Tops and Reco Jets',10,10,1400,600)
+cTopsJets800.Divide(2,4,0.02,0.02)
+
+i = 4
+space = 1
+
+while i <= 7:
+    cTopsJets800.cd(space)
+    top_all[i].Draw()
+    cTopsJets800.cd(space+1)
+    jet_all[i].Draw()
+    
+    i += 1
+    space += 2
+cTopsJets800.Update()
 '''
 ctopjet = TCanvas('ctopjet', 'Tops jets', 10, 10, 1400, 600)
 htop_jet.Draw()
