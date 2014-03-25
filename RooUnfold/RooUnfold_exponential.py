@@ -18,7 +18,7 @@ from ROOT import kRed,kBlack,kBlue
 from ROOT import RooUnfoldSvd
 #from ROOT import RooUnfoldTUnfold
 
-lorange = 0
+lorange = 200
 hirange = 1500
 nbins = 15
 kreg = 10
@@ -46,8 +46,8 @@ def smear(xt):
 #  Example Unfolding
 # ==============================================================================
 
-MC_tau = 2
-MC_tau_range = 5
+MC_tau = .012
+MC_tau_range = 0.013 
 
 data_tau = 0
 count = 0
@@ -61,10 +61,12 @@ while MC_tau < MC_tau_range:
     hMC_true = TH1D("MC_true","MC: Exponential", nbins,lorange,hirange)
     hMC_meas = TH1D("MC_meas","MC: Exponential", nbins,lorange,hirange)
 
+    #MC_tau = 1.0/MC_tau
+
 
     # Train with an exponential 
     for i in xrange(10000):
-        xt = 100+100*gRandom.Exp(MC_tau)  # paramter is tau, where exp(-t/tau)
+        xt = 200+5*gRandom.Exp(1.0/MC_tau)  # paramter is tau, where exp(-t/tau)
         x = smear(xt)
         hMC_true.Fill(xt)
         if x!= None:
@@ -73,6 +75,10 @@ while MC_tau < MC_tau_range:
         else:
             response.Miss(xt);
 
+        #print xt
+        #print x
+
+    #exit()
     print response
 
     #unfold0 = RooUnfoldBayes(response,hMC_meas,4);
@@ -137,8 +143,8 @@ while MC_tau < MC_tau_range:
 
 
     
-    data_tau = 2 
-    data_tau_range = 11
+    data_tau = 0.01266 
+    data_tau_range = 1 
     while data_tau < data_tau_range:
         print "==================================== TEST ====================================="
         hTrue= TH1D ("true", "Toy Data: Exponential", nbins,lorange,hirange)
@@ -146,7 +152,7 @@ while MC_tau < MC_tau_range:
 
         # Test with an exponential 
         for i in xrange(10000):
-            xt = 100 + 100*gRandom.Exp(data_tau)
+            xt = 200 + 5*gRandom.Exp(1.0/data_tau)
             x = smear(xt)
             hTrue.Fill(xt)
             if x!= None:
@@ -230,9 +236,12 @@ while MC_tau < MC_tau_range:
         hReco.SetLineWidth(3)
         
 
-        if data_tau == 2:
+        #if data_tau == 2:
+        if 1:
             name = "hreco_MCtau%d_datatau%d" % (int(MC_tau),int(data_tau))
             hReco.SetName(name)
+            print "HERERHEKJHREKJHRKEHRKEJHRE"
+            print name
             data_unfolded_histos.append(hReco)
 
         #hReco.SetTitle("Data Truth, Reconstructed, and Unfolded")
@@ -290,7 +299,7 @@ while MC_tau < MC_tau_range:
         '''
 
         data_tau += 2
-    MC_tau += 1
+    MC_tau += 0.001
     count += 1
 
 # Print all the unfolded histos
@@ -302,6 +311,9 @@ legend = TLegend(0.48,0.70,0.78,0.90)
 legend.SetFillColor(0)
 MC_tau = MC_tau - count 
 data_tau = 2
+print "kjhdsfkjhdsfkjhdsfs"
+print data_unfolded_histos
+print len(data_unfolded_histos)
 for i,h in enumerate(data_unfolded_histos):
     print h
     h.SetLineColor(colors[i])
@@ -313,9 +325,11 @@ for i,h in enumerate(data_unfolded_histos):
         h.Draw("same")
         legend.AddEntry(h,"Data Unfolded, MC_tau: " + str(MC_tau + i),"l")
     legend.Draw()
-    h.SetMinimum(-10)
-    h.SetMaximum(500)
+    #h.SetMinimum(-10)
+    #h.SetMaximum(500)
     canunfold.Update()
+
+canunfold.Update()
 canunfold.SaveAs("ComparisonUnfoldedData_DiffMC.png")
 
 #================================================================================
