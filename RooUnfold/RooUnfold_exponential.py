@@ -38,7 +38,8 @@ def smear(xt):
   if x>xeff: 
     return None
 
-  xsmear= gRandom.Gaus(-100,50.0);     #  bias and smear
+  #xsmear= gRandom.Gaus(-100,50.0);     #  bias and smear
+  xsmear = gRandom.Gaus(2.277,0.0139);
 
   return xt+xsmear;
 

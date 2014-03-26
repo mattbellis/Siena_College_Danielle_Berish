@@ -92,7 +92,7 @@ top_all = []
 jet_all = []
 
 binNum = 20
-while binNum < 820:
+while binNum < 10000000:
     nameTop = "htop_%d" % (binNum)
     nameJet = "hjet_%d" % (binNum)
     top_all.append(TH1D(nameTop,"pT Distribution of the hadronically decaying top",80,0,800))
