@@ -129,10 +129,12 @@ while MC_tau < MC_tau_range:
     hMC_true.SetLineColor(kBlack);  
     hMC_true.SetTitle("MC Sample "+sampleName+';Boosted top p_T (GeV/c)')
     hMC_true.SetLineWidth(3)
+    hMC_true.SetLineStyle(2)
     hMC_true.Draw();  # MC raw 
 
     hMC_meas.SetLineColor(kBlue);
     hMC_meas.SetLineWidth(3)
+    hMC_meas.SetLineStyle(2)
     hMC_meas.Draw("SAME");  # MC measured
     
     hMC_true.SetMaximum(22000)
@@ -246,7 +248,7 @@ while MC_tau < MC_tau_range:
 print "HERE IS WHERE WE ARE GOING TO PRINT THEM ALL........"
 canunfold = TCanvas("canunfold","All the unfolded histos",200,10,700,500)
 canunfold.Divide(1,1)
-colors = [2,3,4,5,6,7,8,9]
+colors = [2,3,6,7,8,9]
 legend = TLegend(0.48,0.70,0.78,0.90)
 legend.SetFillColor(0)
 MC_tau = MC_tau - count 
@@ -285,7 +287,7 @@ canunfold.SaveAs("ComparisonUnfoldedData_DiffMC.png")
 print "HERE IS WHERE WE ARE GOING TO PRINT THEM ALL........"
 canunfoldSmall = TCanvas("canunfoldSmall","All the unfolded histos",200,10,700,500)
 canunfoldSmall.Divide(1,1)
-colors = [2,3,4,5,6,7,8,9]
+colors = [2,3,6,7,8,9]
 legend = TLegend(0.48,0.70,0.78,0.90)
 legend.SetFillColor(0)
 for i,h in enumerate(data_unfolded_histosSmall):
@@ -322,8 +324,9 @@ canunfoldSmall.SaveAs("ComparisonUnfoldedData_DiffMCSmall.png")
 print "======================================Response matrix========================="
 print response
 c11 = TCanvas('c10','Response matrix',200,10,700,500)
-response.Mresponse().Draw()
-response.SaveAs("Response Matrix.png")
+responseM = response.Mresponse()
+responseM.Draw()
+response.SaveAs("ResponseMatrix.png")
 ################################################################################
 if __name__=="__main__":
     rep = ''
