@@ -88,27 +88,17 @@ top_histos = []
 jet_histos = []
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-htop_100 = TH1D("htop_100","pT Distribution of the hadronically decaying top",80,0,800)
-htop_200 = TH1D("htop_200","pT Distribution of the hadronically decaying top",80,0,800)
-htop_300 = TH1D("htop_300","pT Distribution of the hadronically decaying top",80,0,800)
-htop_400 = TH1D("htop_400","pT Distribution of the hadronically decaying top",80,0,800)
-htop_500 = TH1D("htop_500","pT Distribution of the hadronically decaying top",80,0,800)
-htop_600 = TH1D("htop_600","pT Distribution of the hadronically decaying top",80,0,800)
-htop_700 = TH1D("htop_700","pT Distribution of the hadronically decaying top",80,0,800)
-htop_800 = TH1D("htop_800","pT Distribution of the hadronically decaying top",80,0,800)
+top_all = []
+jet_all = []
 
+binNum = 20
+while binNum < 10000000:
+    nameTop = "htop_%d" % (binNum)
+    nameJet = "hjet_%d" % (binNum)
+    top_all.append(TH1D(nameTop,"pT Distribution of the hadronically decaying top",80,0,800))
+    jet_all.append(TH1D(nameJet,"pT Distribution of the top jet",80,0,800))
+    binNum += 20
 
-hjet_100 = TH1D("hjet_100","pT Distribution of the top jet",80,0,800)
-hjet_200 = TH1D("hjet_200","pT Distribution of the top jet",80,0,800)
-hjet_300 = TH1D("hjet_300","pT Distribution of the top jet",80,0,800)
-hjet_400 = TH1D("hjet_400","pT Distribution of the top jet",80,0,800)
-hjet_500 = TH1D("hjet_500","pT Distribution of the top jet",80,0,800)
-hjet_600 = TH1D("hjet_600","pT Distribution of the top jet",80,0,800)
-hjet_700 = TH1D("hjet_700","pT Distribution of the top jet",80,0,800)
-hjet_800 = TH1D("hjet_800","pT Distribution of the top jet",80,0,800)
-
-top_all = [htop_100,htop_200,htop_300,htop_400,htop_500,htop_600,htop_700,htop_800]
-jet_all = [hjet_100,hjet_200,hjet_300,hjet_400,hjet_500,hjet_600,hjet_700,hjet_800]
 
 ###################################################################################
 # Top Truth
@@ -230,7 +220,7 @@ for n in xrange(nev):
 
     
     pT_low = 0
-    pT_high = 100
+    pT_high = 20
     histo = 0
 
     while pT_high < 900:
@@ -270,8 +260,8 @@ for n in xrange(nev):
                     
                     jet_all[histo].Fill(top_pt)
 
-        pT_high += 100
-        pT_low += 100
+        pT_high += 20
+        pT_low += 20
         histo += 1
 
 
@@ -283,12 +273,21 @@ print "Not Semi_leptonically decaying ttbar events: ", not_semi_lepton_count
 ################################################################################
 # Histograms of the pT distribution of the truth top and antitop 
 ################################################################################
-ctop = TCanvas('ctop','Top pt', 10, 10, 1400, 600)
+ctop = TCanvas('ctop','Top pt', 10, 10, 1400, 1000)
 print "===================================="
 print "Top exponential"
 htop_pt.Fit("expo","","",115,650)
+#fitparam = htop_pt.GetFunction("expo")
+#const = fitparam.GetParameter(0)
+#constError = fitparam.GetParError(0)
+#slope = fitparam.GetParameter(1)
+#slopeError = fitparam.GetParError(1)
 htop_pt.Draw()
 ctop.Update()
+
+#print "PRINTING PARAMETER"
+#print const, "+/-", constError
+#print slope, "+/-", slopeError
 
 cantitop = TCanvas('cantitop', 'AntiTop pt', 10, 10, 1400, 600)
 print "====================================="
@@ -305,7 +304,7 @@ ctophad = TCanvas('ctophad', 'Tops that Decay Hadronically', 10, 10, 1400, 600)
 htop_hadron.Draw()
 ctophad.Update()
 
-creco = TCanvas('creco', 'Hadronically decayed tops',10,10,1400,600)
+creco = TCanvas('creco', 'Hadronically decayed tops',10,10,1400,1000)
 creco.Divide(2,1,0.02,0.02)
 creco.cd(1)
 hHadrTop.Draw()
@@ -313,38 +312,239 @@ creco.cd(2)
 htop_jet.Draw()
 creco.Update()
 
-##########
-cTopsJets400 = TCanvas('cTopsJets400','Hadronically Decayed Tops and Reco Jets',10,10,1400,600)
-cTopsJets400.Divide(2,4,0.02,0.02)
+
+#############################################################################################################
+f = open("Gaussian_Params.dat","w")
+#############################################################################################################
+cTopsJets100 = TCanvas('cTopsJets100','Hadronically Decayed Tops and Reco Jets',10,10,1400,1000)
+cTopsJets100.Divide(2,5,0.02,0.02)
 
 i = 0
 space = 1
 
-while i <= 3:
+while i <= 4:
+    cTopsJets100.cd(space)
+    top_all[i].Draw()
+    cTopsJets100.cd(space+1)
+    #jet_all[i].Fit("gaus","","",150,300)
+    jet_all[i].Fit("gaus")
+    
+    params = jet_all[i].GetFunction("gaus")
+    mean = params.GetParameter(1)
+    meanError = params.GetParError(1)
+    sigma = params.GetParameter(2)
+    sigmaError = params.GetParError(2)
+    output = "%f %f %f %f\n" % (mean, meanError, sigma, sigmaError)
+    f.write(output)
+    
+    jet_all[i].Draw()
+    
+    i += 1
+    space += 2
+cTopsJets100.Update()
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cTopsJets200 = TCanvas('cTopsJets200','Hadronically Decayed Tops and Reco Jets',10,10,1400,1000)
+cTopsJets200.Divide(2,5,0.02,0.02)
+
+i = 5
+space = 1
+xRange = 0
+
+while i <= 9:
+    cTopsJets200.cd(space)
+    top_all[i].Draw()
+    cTopsJets200.cd(space+1)
+    #jet_all[i].Fit("gaus","","",150,300)
+    jet_all[i].Fit("gaus")
+    
+    params = jet_all[i].GetFunction("gaus")
+    mean = params.GetParameter(1)
+    meanError = params.GetParError(1)
+    sigma = params.GetParameter(2)
+    sigmaError = params.GetParError(2)
+    output = "%f %f %f %f\n" % (mean, meanError, sigma, sigmaError)
+    f.write(output)
+    
+    jet_all[i].Draw()
+    
+    i += 1
+    space += 2
+    xRange += 20
+cTopsJets200.Update()
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cTopsJets300 = TCanvas('cTopsJets300','Hadronically Decayed Tops and Reco Jets',10,10,1400,1000)
+cTopsJets300.Divide(2,5,0.02,0.02)
+
+i = 10
+space = 1
+
+while i <= 14:
+    cTopsJets300.cd(space)
+    top_all[i].Draw()
+    cTopsJets300.cd(space+1)
+    #jet_all[i].Fit("gaus","","",150,400)
+    fit = jet_all[i].Fit("gaus")
+    
+    params = jet_all[i].GetFunction("gaus")
+    mean = params.GetParameter(1)
+    meanError = params.GetParError(1)
+    sigma = params.GetParameter(2)
+    sigmaError = params.GetParError(2)
+    output = "%f %f %f %f\n" % (mean, meanError, sigma, sigmaError)
+    f.write(output)
+    
+    jet_all[i].Draw()
+    
+    i += 1
+    space += 2
+cTopsJets300.Update()
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cTopsJets400 = TCanvas('cTopsJets400','Hadronically Decayed Tops and Reco Jets',10,10,1400,1000)
+cTopsJets400.Divide(2,5,0.02,0.02)
+
+i = 15
+space = 1
+
+while i <= 19:
     cTopsJets400.cd(space)
     top_all[i].Draw()
     cTopsJets400.cd(space+1)
+    #jet_all[i].Fit("gaus","","",150,400)
+    jet_all[i].Fit("gaus")
+    
+    params = jet_all[i].GetFunction("gaus")
+    mean = params.GetParameter(1)
+    meanError = params.GetParError(1)
+    sigma = params.GetParameter(2)
+    sigmaError = params.GetParError(2)
+    output = "%f %f %f %f\n" % (mean, meanError, sigma, sigmaError)
+    f.write(output)
+    
     jet_all[i].Draw()
     
     i += 1
     space += 2
 cTopsJets400.Update()
 
-cTopsJets800 = TCanvas('cTopsJets800','Hadronically Decayed Tops and Reco Jets',10,10,1400,600)
-cTopsJets800.Divide(2,4,0.02,0.02)
 
-i = 4
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cTopsJets500 = TCanvas('cTopsJets500','Hadronically Decayed Tops and Reco Jets',10,10,1400,1000)
+cTopsJets500.Divide(2,5,0.02,0.02)
+
+i = 20
 space = 1
 
-while i <= 7:
+while i <= 24:
+    cTopsJets500.cd(space)
+    top_all[i].Draw()
+    cTopsJets500.cd(space+1)
+    #jet_all[i].Fit("gaus","","",200,600)
+    jet_all[i].Fit("gaus")
+    
+    params = jet_all[i].GetFunction("gaus")
+    mean = params.GetParameter(1)
+    meanError = params.GetParError(1)
+    sigma = params.GetParameter(2)
+    sigmaError = params.GetParError(2)
+    output = "%f %f %f %f\n" % (mean, meanError, sigma, sigmaError)
+    f.write(output)
+    
+    jet_all[i].Draw()
+    
+    i += 1
+    space += 2
+cTopsJets500.Update()
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cTopsJets600 = TCanvas('cTopsJets600','Hadronically Decayed Tops and Reco Jets',10,10,1400,1000)
+cTopsJets600.Divide(2,5,0.02,0.02)
+
+i = 25
+space = 1
+
+while i <= 29:
+    cTopsJets600.cd(space)
+    top_all[i].Draw()
+    cTopsJets600.cd(space+1)
+    #jet_all[i].Fit("gaus","","",400,700)
+    jet_all[i].Fit("gaus")
+    
+    params = jet_all[i].GetFunction("gaus")
+    mean = params.GetParameter(1)
+    meanError = params.GetParError(1)
+    sigma = params.GetParameter(2)
+    sigmaError = params.GetParError(2)
+    output = "%f %f %f %f\n" % (mean, meanError, sigma, sigmaError)
+    f.write(output)
+    
+    jet_all[i].Draw()
+    
+    i += 1
+    space += 2
+cTopsJets600.Update()
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cTopsJets700 = TCanvas('cTopsJets700','Hadronically Decayed Tops and Reco Jets',10,10,1400,1000)
+cTopsJets700.Divide(2,5,0.02,0.02)
+
+i = 30
+space = 1
+
+while i <= 34:
+    cTopsJets700.cd(space)
+    top_all[i].Draw()
+    cTopsJets700.cd(space+1)
+    #jet_all[i].Fit("gaus","","",150,400)
+    jet_all[i].Fit("gaus")
+    
+    params = jet_all[i].GetFunction("gaus")
+    mean = params.GetParameter(1)
+    meanError = params.GetParError(1)
+    sigma = params.GetParameter(2)
+    sigmaError = params.GetParError(2)
+    output = "%f %f %f %f\n" % (mean, meanError, sigma, sigmaError)
+    f.write(output)
+    
+    jet_all[i].Draw()
+    
+    i += 1
+    space += 2
+cTopsJets700.Update()
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+cTopsJets800 = TCanvas('cTopsJets800','Hadronically Decayed Tops and Reco Jets',10,10,1400,1000)
+cTopsJets800.Divide(2,5,0.02,0.02)
+
+i = 35
+space = 1
+
+while i <= 39:
     cTopsJets800.cd(space)
     top_all[i].Draw()
     cTopsJets800.cd(space+1)
+    #jet_all[i].Fit("gaus","","",150,400)
+    jet_all[i].Fit("gaus")
+    
+    params = jet_all[i].GetFunction("gaus")
+    mean = params.GetParameter(1)
+    meanError = params.GetParError(1)
+    sigma = params.GetParameter(2)
+    sigmaError = params.GetParError(2)
+    output = "%f %f %f %f\n" % (mean, meanError, sigma, sigmaError)
+    f.write(output)
+    
     jet_all[i].Draw()
     
     i += 1
     space += 2
 cTopsJets800.Update()
+#######################################################################
+f.close()
+
+########################################################################################################
 '''
 ctopjet = TCanvas('ctopjet', 'Tops jets', 10, 10, 1400, 600)
 htop_jet.Draw()
