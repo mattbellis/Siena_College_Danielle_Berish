@@ -40,26 +40,27 @@ while count < len(content):
     i += 4
     count += 4
 
-
+mean = np.array(mean)
+std = np.array(std)
 ############################################
 # List of pT's 
 pT = []
-n = 10
+n = 170
 
-while n <= 800:
+while n <= 740:
     pT.append(n)
     n += 20
 
 ###########################################
 # Fit the mean and std. dev. 
 
-slope,intercept = np.polyfit(pT,mean,1)
+slope,intercept = np.polyfit(pT,mean[8:37],1)
 print "Slope of Mean: ",slope
-#print intercept
+print "Intercept of Mean: ",intercept
 
-slope_std,intercept_std = np.polyfit(pT,std,1)
+slope_std,intercept_std = np.polyfit(pT,std[8:37],1)
 print "Slope of Std. Dev.: ", slope_std
-#print intercept_std
+print "Intercept of Std. Dev.: ",intercept_std
 
 ############################################
 # Plot the mean and std. dev. 
@@ -67,12 +68,12 @@ print "Slope of Std. Dev.: ", slope_std
 plt.figure(1)
 plt.subplot(211)
 plt.ylabel("Mean")
-plt.scatter(pT,mean)
+plt.scatter(pT,mean[8:37])
 
 plt.subplot(212)
 plt.xlabel("Top pT")
 plt.ylabel("Std. Dev.")
-plt.scatter(pT,std)
+plt.scatter(pT,std[8:37])
 plt.show()
 
 
