@@ -40,7 +40,8 @@ ax.plot(x,y2,'-g')
 
 # Fit the data to a linear function (first-order polynomial)
 params_starting_vals = [1.0,1.0]
-params_final_vals = optimize.fmin(errfunc, params_starting_vals[:], args=(x,y,yerr),full_output=True)
+#params_final_vals = optimize.fmin(errfunc, params_starting_vals[:], args=(x,y,yerr),full_output=True)
+params_final_vals = optimize.curve_fit(errfunc, params_starting_vals[:], args=(x,y,yerr),full_output=True)
 
 # Take a closer look at the output
 print "Final values"
