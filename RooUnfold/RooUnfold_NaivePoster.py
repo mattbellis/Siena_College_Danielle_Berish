@@ -73,10 +73,12 @@ c1 = TCanvas( 'c1', 'MC', 200, 10, 700, 500 )
 hMC_true.SetLineColor(kBlack);  
 hMC_true.SetTitle('MC Sample A: Breit Wigner')
 hMC_true.SetLineWidth(3)
+hMC_true.SetLineStyle(2)
 hMC_true.Draw();  # MC raw 
 
 hMC_meas.SetLineColor(kBlue);
 hMC_meas.SetLineWidth(3)
+hMC_meas.SetLineStyle(2)
 hMC_meas.Draw("SAME");  # MC measured
 
 legend = TLegend(0.70,0.6,0.98,0.75)
@@ -95,6 +97,7 @@ hMC_eff = hMC_meas.Clone();
 hMC_eff.Divide(hMC_true);
 hMC_eff.SetTitle("MC Efficiency")
 hMC_eff.SetLineColor(kGreen+2)
+hMC_eff.SetLineStyle(1)
 c2.SetLogy();
 hMC_eff.Draw();
 c2.SaveAs("MCEff_BW.png")
@@ -129,10 +132,12 @@ c3 = TCanvas( 'c3', 'MC', 200, 10, 700, 500 )
 hMC_trueG.SetLineColor(kBlack);  
 hMC_trueG.SetTitle('MC Sample B: Gaussian')
 hMC_trueG.SetLineWidth(3)
+hMC_trueG.SetLineStyle(2)
 hMC_trueG.Draw();  # MC raw 
 
 hMC_measG.SetLineColor(kBlue);
 hMC_measG.SetLineWidth(3)
+hMC_measG.SetLineStyle(2)
 hMC_measG.Draw("SAME");  # MC measured
 
 legendG = TLegend(0.7,0.6,0.98,0.75)
@@ -151,6 +156,7 @@ hMC_effG = hMC_measG.Clone();
 hMC_effG.Divide(hMC_trueG);
 hMC_effG.SetTitle("MC Efficiency")
 hMC_effG.SetLineColor(kGreen+2)
+hMC_effG.SetLineStyle(1)
 c4.SetLogy();
 hMC_effG.Draw();
 c4.SaveAs("MCEff_G.png")

@@ -14,7 +14,7 @@ from ROOT import gRandom, TH1, TH1D, cout, TCanvas, TLegend, TFile
 from ROOT import RooUnfoldResponse
 from ROOT import RooUnfold
 #from ROOT import RooUnfoldBayes
-from ROOT import kRed,kBlack,kBlue
+from ROOT import kRed,kBlack,kBlue,kMagenta,kGreen
 from ROOT import RooUnfoldSvd
 #from ROOT import RooUnfoldTUnfold
 
@@ -84,6 +84,8 @@ data_unfolded_histosSmall = []
 
 sampleNum = 0
 
+colors = [kRed,kMagenta+1,kGreen+1]
+
 while MC_tau < MC_tau_range:
 
     print "==================================== TRAIN ===================================="
@@ -126,15 +128,15 @@ while MC_tau < MC_tau_range:
     c1 = TCanvas( 'c1', 'MC', 200, 10, 700, 500 )
     
 
-    hMC_true.SetLineColor(kBlack);  
+    hMC_true.SetLineColor(colors[sampleNum]);  
     hMC_true.SetTitle("MC Sample "+sampleName+';Boosted top p_T (GeV/c)')
     hMC_true.SetLineWidth(3)
     hMC_true.SetLineStyle(2)
     hMC_true.Draw();  # MC raw 
 
-    hMC_meas.SetLineColor(kBlue);
+    hMC_meas.SetLineColor(colors[sampleNum]);
     hMC_meas.SetLineWidth(3)
-    hMC_meas.SetLineStyle(2)
+    hMC_meas.SetLineStyle(1)
     hMC_meas.Draw("SAME");  # MC measured
     
     hMC_true.SetMaximum(22000)
@@ -164,11 +166,12 @@ while MC_tau < MC_tau_range:
 
         hTrueLarge.SetLineColor(kBlack);
         hTrueLarge.SetLineWidth(3)
-        hTrueLarge.SetTitle('"Data";Boosted top p_T (GeV/c)')
-        hTrueLarge.Draw();     # Data truth
+        hTrueLarge.SetTitle('Reconstructed "Data";Boosted top p_T (GeV/c)')
+        #hTrueLarge.Draw();     # Data truth
         #c3.SaveAs("Data_true.png")
 
         hMeasLarge.SetLineColor(kBlue);
+        hMeasLarge.SetTitle('Reconstructed "Data";Boosted top p_T (GeV/c)')
         hMeasLarge.SetLineWidth(3)
         hMeasLarge.Draw("SAME");     # Data reconstructed
         #c3.SaveAs("Data_meas.png")
@@ -188,14 +191,14 @@ while MC_tau < MC_tau_range:
 
         #hReco.SetTitle("Data Truth, Reconstructed, and Unfolded")
         #hReco.Draw("SAME");           # Data unfolded 
-
+        '''
         legend = TLegend(0.4,0.7,0.78,0.90)
         legend.SetFillColor(0)
-        legend.AddEntry(hTrueLarge,'"Data" Truth',"l")
+        #legend.AddEntry(hTrueLarge,'"Data" Truth',"l")
         legend.AddEntry(hMeasLarge,'"Data" Reconstructed',"l")
         #legend.AddEntry(hReco,"Data Unfolded","l")
         legend.Draw()
-         
+        '''
         c3.SaveAs("DataLarge_MCTau%.3f_dataTau%.5f.png" % (float(MC_tau),float(data_tau)))
 
         c3.Update()
@@ -204,9 +207,10 @@ while MC_tau < MC_tau_range:
 
         hTrueSmall.SetLineColor(kBlack);
         hTrueSmall.SetLineWidth(3)
-        hTrueSmall.SetTitle('"Data";Boosted top p_T (GeV/c)')
-        hTrueSmall.Draw();     # Data truth
+        hTrueSmall.SetTitle('Reconstructed "Data";Boosted top p_T (GeV/c)')
+        #hTrueSmall.Draw();     # Data truth
 
+        hMeasSmall.SetTitle('Reconstructed "Data";Boosted top p_T (GeV/c)')
         hMeasSmall.SetLineColor(kBlue);
         hMeasSmall.SetLineWidth(3)
         hMeasSmall.Draw("SAME");     # Data reconstructed
@@ -227,14 +231,14 @@ while MC_tau < MC_tau_range:
 
         #hReco.SetTitle("Data Truth, Reconstructed, and Unfolded")
         #hReco.Draw("SAME");           # Data unfolded 
-
+        '''
         legend = TLegend(0.4,0.7,0.78,0.90)
         legend.SetFillColor(0)
-        legend.AddEntry(hTrueSmall,'"Data" Truth',"l")
+        #legend.AddEntry(hTrueSmall,'"Data" Truth',"l")
         legend.AddEntry(hMeasSmall,'"Data" Reconstructed',"l")
         #legend.AddEntry(hReco,"Data Unfolded","l")
         legend.Draw()
-         
+        '''
         c4.SaveAs("DataSmall_MCTau%.3f_dataTau%.5f.png" % (float(MC_tau),float(data_tau)))
 
         c4.Update()
@@ -248,7 +252,7 @@ while MC_tau < MC_tau_range:
 print "HERE IS WHERE WE ARE GOING TO PRINT THEM ALL........"
 canunfold = TCanvas("canunfold","All the unfolded histos",200,10,700,500)
 canunfold.Divide(1,1)
-colors = [2,3,6,7,8,9]
+#colors = [2,3,6,7,8,9]
 legend = TLegend(0.48,0.70,0.78,0.90)
 legend.SetFillColor(0)
 MC_tau = MC_tau - count 
@@ -278,7 +282,7 @@ hdata = data_truth_histosLarge[0]
 hdata.SetLineColor(kBlack)
 hdata.SetName("Data Unfolded")
 hdata.Draw("same")
-legend.AddEntry(hdata,'"Data truth',"l")
+legend.AddEntry(hdata,'"Data" Truth',"l")
 
 canunfold.Update()
 canunfold.SaveAs("ComparisonUnfoldedData_DiffMC.png")
@@ -287,7 +291,7 @@ canunfold.SaveAs("ComparisonUnfoldedData_DiffMC.png")
 print "HERE IS WHERE WE ARE GOING TO PRINT THEM ALL........"
 canunfoldSmall = TCanvas("canunfoldSmall","All the unfolded histos",200,10,700,500)
 canunfoldSmall.Divide(1,1)
-colors = [2,3,6,7,8,9]
+#colors = [2,3,6,7,8,9]
 legend = TLegend(0.48,0.70,0.78,0.90)
 legend.SetFillColor(0)
 for i,h in enumerate(data_unfolded_histosSmall):
@@ -316,7 +320,7 @@ hdataSmall = data_truth_histosSmall[0]
 hdataSmall.SetLineColor(kBlack)
 hdataSmall.SetName("Data Unfolded")
 hdataSmall.Draw("same")
-legend.AddEntry(hdataSmall,'"Data truth',"l")
+legend.AddEntry(hdataSmall,'"Data" Truth',"l")
 
 canunfoldSmall.Update()
 canunfoldSmall.SaveAs("ComparisonUnfoldedData_DiffMCSmall.png")
@@ -324,8 +328,11 @@ canunfoldSmall.SaveAs("ComparisonUnfoldedData_DiffMCSmall.png")
 print "======================================Response matrix========================="
 print response
 c11 = TCanvas('c10','Response matrix',200,10,700,500)
-responseM = response.Mresponse()
-responseM.Draw()
+#responseM = response.Mresponse()
+responseM = response.Hresponse()
+responseM.SetTitle("Response;Boosted top truth p_T (GeV/c)")
+responseM.GetYaxis().SetTitle("Boosted top reconstructed p_T (GeV/c)")
+responseM.Draw('colz')
 response.SaveAs("ResponseMatrix.png")
 ################################################################################
 if __name__=="__main__":
