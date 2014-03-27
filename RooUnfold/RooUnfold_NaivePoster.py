@@ -169,7 +169,7 @@ hMeas= TH1D ("meas", "Toy Data: Exponential", nbins,lorange,hirange)
 
 # Test with an gaussian 
 for i in xrange(10000):
-    xt = gRandom.Gaus(0.0,2.0)
+    xt = gRandom.Gaus(0.3,2.5)
     x = smear(xt)
     hTrue.Fill(xt)
     if x!= None:
