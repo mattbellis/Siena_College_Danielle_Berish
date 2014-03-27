@@ -42,7 +42,18 @@ def smear(xt):
   xsmear = gRandom.Gaus(1.1212,0.008379);
 
   return xt+xsmear;
+###################################################################################
 
+hTrue= TH1D ("true", "Toy Data: Exponential", nbins,lorange,hirange)
+hMeas= TH1D ("meas", "Toy Data: Exponential", nbins,lorange,hirange)
+
+# Test with an exponential 
+for i in xrange(10000):
+    xt = 200 + 5*gRandom.Exp(1.0/0.01266)
+    x = smear(xt)
+    hTrue.Fill(xt)
+    if x!= None:
+        hMeas.Fill(x);
 # ==============================================================================
 #  Example Unfolding
 # ==============================================================================
@@ -114,7 +125,8 @@ while MC_tau < MC_tau_range:
     #hMC_reco.SetLineColor(kRed);
     #hMC_reco.Draw("SAME");        # MC unfolded
     #c1.SaveAs("MC_unfold.png")
-
+    
+    hMC_true.SetMaximum(22000)
     legend = TLegend(0.4,0.7,0.78,0.90)
     legend.SetFillColor(0)
     legend.AddEntry(hMC_true,"Truth MC","l")
@@ -157,6 +169,7 @@ while MC_tau < MC_tau_range:
     data_tau_range = 1 
     while data_tau < data_tau_range:
         print "==================================== TEST ====================================="
+        '''
         hTrue= TH1D ("true", "Toy Data: Exponential", nbins,lorange,hirange)
         hMeas= TH1D ("meas", "Toy Data: Exponential", nbins,lorange,hirange)
 
@@ -167,7 +180,7 @@ while MC_tau < MC_tau_range:
             hTrue.Fill(xt)
             if x!= None:
                 hMeas.Fill(x);
-
+        '''
 
         '''
         # Data efficiency (meas/raw)
@@ -343,11 +356,12 @@ for i,h in enumerate(data_unfolded_histos):
         legend.AddEntry(h,'"Data" Unfolded, MC Sample '+SampleName,"l")
     legend.Draw()
     #h.SetMinimum(-10)
-    #h.SetMaximum(500)
+    h.SetMaximum(2100)
     canunfold.Update()
 
 hdata = data_truth_histos[0]
 hdata.SetLineColor(kBlack)
+hdata.SetName("Data Unfolded")
 hdata.Draw("same")
 legend.AddEntry(hdata,'"Data truth',"l")
 
