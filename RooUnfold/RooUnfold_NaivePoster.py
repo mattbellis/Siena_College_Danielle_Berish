@@ -14,15 +14,19 @@ from ROOT import gRandom, TH1, TH1D, cout, TCanvas, TLegend, TFile
 from ROOT import RooUnfoldResponse
 from ROOT import RooUnfold
 #from ROOT import RooUnfoldBayes
-from ROOT import kRed,kBlack,kBlue,kGreen
+from ROOT import kRed,kBlack,kBlue,kGreen,kOrange,kMagenta
 from ROOT import RooUnfoldSvd
 #from ROOT import RooUnfoldTUnfold
+from ROOT import gStyle
+from ROOT import TPaveText
 
 lorange = -10
 hirange = 10
 nbins = 40
 kreg = 20
-
+text = []
+gStyle.SetOptStat(11)
+#gStyle.SetLegendFont(62)
 # ==============================================================================
 #  Gaussian smearing, systematic translation, and variable inefficiency
 # ==============================================================================
@@ -70,22 +74,30 @@ for i in xrange(100000):
 c1 = TCanvas( 'c1', 'MC', 200, 10, 700, 500 )
 
 
-hMC_true.SetLineColor(kBlack);  
-hMC_true.SetTitle('MC Sample A: Breit Wigner')
+hMC_true.SetLineColor(kOrange+9);  
+hMC_true.SetTitle('MC Sample Y: Breit Wigner')
 hMC_true.SetLineWidth(3)
 hMC_true.SetLineStyle(2)
 hMC_true.Draw();  # MC raw 
 
-hMC_meas.SetLineColor(kBlue);
+hMC_meas.SetLineColor(kMagenta+2);
 hMC_meas.SetLineWidth(3)
-hMC_meas.SetLineStyle(2)
+hMC_meas.SetLineStyle(1)
 hMC_meas.Draw("SAME");  # MC measured
 
-legend = TLegend(0.70,0.6,0.98,0.75)
+legend = TLegend(0.70,0.84,0.98,0.65)
 legend.SetFillColor(0)
 legend.AddEntry(hMC_true,"Truth MC","l")
 legend.AddEntry(hMC_meas,"Reconstructed MC","l")
 legend.Draw()
+
+gStyle.SetTitleFontSize(0.05)
+t = TPaveText(0.0,0.92,0.2,0.99,"NDC")
+t.AddText("Work In Progress")
+t.SetFillColor(0)
+text.append(t)
+t.Draw()
+
 c1.SaveAs("MC_BW.png")
 
 c1.Update()
@@ -95,11 +107,20 @@ c2 = TCanvas( 'c2', 'MC_eff', 200, 10, 700, 500)
 
 hMC_eff = hMC_meas.Clone();
 hMC_eff.Divide(hMC_true);
-hMC_eff.SetTitle("MC Efficiency")
+hMC_eff.SetTitle("MC Sample Y Efficiency")
 hMC_eff.SetLineColor(kGreen+2)
 hMC_eff.SetLineStyle(1)
 c2.SetLogy();
 hMC_eff.Draw();
+
+gStyle.SetTitleFontSize(0.05)
+t = TPaveText(0.0,0.92,0.2,0.99,"NDC")
+t.AddText("Work In Progress")
+t.SetFillColor(0)
+text.append(t)
+t.Draw()
+
+
 c2.SaveAs("MCEff_BW.png")
 
 c2.Update()
@@ -129,22 +150,32 @@ for i in xrange(100000):
 c3 = TCanvas( 'c3', 'MC', 200, 10, 700, 500 )
 
 
-hMC_trueG.SetLineColor(kBlack);  
-hMC_trueG.SetTitle('MC Sample B: Gaussian')
+hMC_trueG.SetLineColor(kOrange+9);  
+hMC_trueG.SetTitle('MC Sample X: Gaussian')
 hMC_trueG.SetLineWidth(3)
 hMC_trueG.SetLineStyle(2)
 hMC_trueG.Draw();  # MC raw 
 
-hMC_measG.SetLineColor(kBlue);
+hMC_measG.SetLineColor(kMagenta+2);
 hMC_measG.SetLineWidth(3)
-hMC_measG.SetLineStyle(2)
+hMC_measG.SetLineStyle(1)
 hMC_measG.Draw("SAME");  # MC measured
 
-legendG = TLegend(0.7,0.6,0.98,0.75)
+legendG = TLegend(0.7,0.84,0.98,0.65)
 legendG.SetFillColor(0)
 legendG.AddEntry(hMC_trueG,"Truth MC","l")
 legendG.AddEntry(hMC_measG,"Reconstructed MC","l")
 legendG.Draw()
+
+
+gStyle.SetTitleFontSize(0.05)
+t = TPaveText(0.0,0.92,0.2,0.99,"NDC")
+t.AddText("Work In Progress")
+t.SetFillColor(0)
+text.append(t)
+t.Draw()
+
+
 c3.SaveAs("MC_G.png")
 
 c3.Update()
@@ -154,11 +185,20 @@ c4 = TCanvas( 'c4', 'MC_eff', 200, 10, 700, 500)
 
 hMC_effG = hMC_measG.Clone();
 hMC_effG.Divide(hMC_trueG);
-hMC_effG.SetTitle("MC Efficiency")
+hMC_effG.SetTitle("MC Sample X Efficiency")
 hMC_effG.SetLineColor(kGreen+2)
 hMC_effG.SetLineStyle(1)
 c4.SetLogy();
 hMC_effG.Draw();
+
+
+gStyle.SetTitleFontSize(0.05)
+t = TPaveText(0.0,0.92,0.2,0.99,"NDC")
+t.AddText("Work In Progress")
+t.SetFillColor(0)
+text.append(t)
+t.Draw()
+
 c4.SaveAs("MCEff_G.png")
 
 c4.Update()
@@ -208,12 +248,18 @@ hTrue.SetLineColor(kBlack)
 hTrue.SetLineWidth(3)
 hTrue.Draw("SAME")
 
-legend = TLegend(0.7,0.6,0.98,0.75)
+legend = TLegend(0.7,0.84,0.98,0.65)
 legend.SetFillColor(0)
 legend.AddEntry(hData_truth_MC,"Acceptance correction", "l")
 legend.AddEntry(hTrue,"Data Truth","l")
 legend.Draw()
 
+gStyle.SetTitleFontSize(0.05)
+t = TPaveText(0.0,0.92,0.2,0.99,"NDC")
+t.AddText("Work In Progress")
+t.SetFillColor(0)
+text.append(t)
+t.Draw()
 c7.SaveAs("NaiveDataTruthCorrectionBW.png")
 
 c7.Update()
@@ -235,12 +281,18 @@ hTrue.SetLineColor(kBlack)
 hTrue.SetLineWidth(3)
 hTrue.Draw("SAME")
 
-legend = TLegend(0.7,0.6,0.98,0.75)
+legend = TLegend(0.7,0.84,0.98,0.65)
 legend.SetFillColor(0)
 legend.AddEntry(hData_truth_MCG,"Acceptance correction", "l")
 legend.AddEntry(hTrue,"Data Truth","l")
 legend.Draw()
 
+gStyle.SetTitleFontSize(0.05)
+t = TPaveText(0.0,0.92,0.2,0.99,"NDC")
+t.AddText("Work In Progress")
+t.SetFillColor(0)
+text.append(t)
+t.Draw()
 c8.SaveAs("NaiveDataTruthCorrectionG.png")
 
 c8.Update()
